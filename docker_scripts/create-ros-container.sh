@@ -1,0 +1,1 @@
+docker run --name=$1 -it --net=host --user=$(id -u $USER):$(id -g $USER)  --volume="/home/$(whoami):/home/$(whoami)"  --volume="/etc/group:/etc/group:ro" --volume="/etc/passwd:/etc/passwd:ro" --volume="/etc/shadow:/etc/shadow:ro" --volume="/etc/sudoers.d:/etc/sudoers.d:ro" osrf/ros:noetic-desktop-full roscore
