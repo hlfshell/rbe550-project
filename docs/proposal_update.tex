@@ -1,0 +1,98 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[margin = 0.8in]{geometry}
+\usepackage{graphicx}
+\usepackage{amsmath, amssymb}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{multirow}
+\usepackage{multicol}
+\usepackage{booktabs}
+\usepackage{bm}
+\setlength{\columnsep}{.75cm}
+\usepackage{float}
+\usepackage{graphicx}
+\usepackage{stfloats}
+\usepackage{hyperref}
+\graphicspath{ {./images/} }
+\setcounter{MaxMatrixCols}{15}
+
+\renewcommand\refname{References}
+\restylefloat{table}
+
+
+\title{Autonomous Operation for Last-Mile Food, Grocery, and Goods Delivery on an Urban Sidewalk-Project Update }
+\author{Keith Chester, Bob DeMont}
+\date{February 21, 2022}
+
+\begin{document}
+\maketitle
+
+
+\begin{multicols}{2}
+\section*{Abstract}
+The purpose of the project is to simulate successful autonomous navigation of a delivery robot along sidewalks in a busy urban environment from store to a delivery address on ground level.
+
+\section*{Background}
+Last mile delivery has been a growing issue with the increase in e-commerce over at least the last 8 years with each year growing from 15-30\% from the year before \cite{Ecom}.  Since much of this final delivery is accomplished via vehicles, the has been an accompanying call for reduced emissions.  A McKinsey study estimates that this could lead to a 25\% increase in CO2 emission in cities \cite{Emiss}.  Most recently, the COVID pandemic with its isolation mandates have led to even greater demand for delivery of not only goods but also everyday essentials such as meals, groceries, and prescription medicine.  This needed to be accomplished with minimal human contact while fewer humans were available due to quarantines and employee availability.  For grocery delivery, the need for fastest route planning is also necessary due to the presence of perishables and temperature sensitive cargo - or, in other words, people prefer their meals hot and their frozen goods cold. Cheng et al \cite{Mcheng} have shown efficient curb detection to set the limits of the robot's path.
+
+\section*{Goals}
+Our goal is to create planning and execution algorithms to permit autonomous navigation and avoidance of both static (mailboxes, trashcans, signs)and dynamic obstacles (people, cars) while following sidewalk rules (crosswalks etc).
+
+\section*{Proposed Methods}
+We plan to explore various navigation, collision detection and avoidance methods implemented in Python to successfully navigate around static obstacles, avoid dynamic obstacles  and reach the destination in a simulated urban environment in Gazebo.
+
+\section*{Expected Results}
+We expect to create a Gazebo-based simulation to navigate from the store to a nearby, ground level delivery address via sidewalks.  Along the way, we plan to encounter static obstacles such as fire hydrants, garbage cans and mailboxes.  We also expect to encounter moving obstacles like people, cars, or other robots.  Through this we will avoid collisions to arrive at the delivery destination while following sidewalk rules.
+
+\section*{Proposed Schedule}
+Our originally proposed schedule is as follows:
+
+\begin{center}
+\begin{tabular}{|cc|}
+\hline
+Milestone & Date  \\
+\hline
+Proposal  &  Feb 1 \\
+Gazebo learning  &  Feb 1-18 \\
+Status Update  &  Feb 21 \\
+Sample environment & Feb 28\\
+Planning algorithm & Mar 14\\
+Obstacle avoidance algorithms & Apr 11\\
+Final Writeup and Presentation & Apr 25-29\\
+Final Submission  &  May 2 \\
+\hline
+\end{tabular}
+%\caption{Schedule}
+%\label{table:Sched}
+\end{center}
+\section*{Progress}
+We are still on track with the previously proposed schedule.  We have spent most of the time to date learning the tools (ROS/Gazebo/Python) needed to complete the project.  We have yet to complete world development which is scheduled for the next two weeks.  Keith is beginning to familiarize himself with the ROS Navigation Stack and how we can modify for our purposes.\\
+We've settled on a non-holonomic robot, (  )  wheeled robot using GPS input for a pre-determined, general path plan and LIDAR for more specific obstacle avoidance during operation.
+\section*{Division of Labor}
+We plan extensive and equal collaboration on all aspects of the project to include coding, algorithm development, testing and submissions. Further delineation of work may occur as we determine proficiency in certain aspects of the project.  
+\label{References}
+
+\bibliographystyle{abbrv}
+\begin{thebibliography}{10}
+\bibitem{Ecom} https://www.statista.com/statistics/379046/worldwide-retail-e-commerce-sales/
+\bibitem{Emiss}https://www.mckinsey.com/industries/travel-logistics-and-infrastructure/our-insights/efficient-and-sustainable-last-mile-logistics-lessons-from-japan
+\bibitem{Kocs}
+M. Kocsis, J. Buyer, N. Sußmann, R. Zöllner and G. Mogan, "Autonomous Grocery Delivery Service in Urban Areas," 2017 IEEE 19th International Conference on High Performance Computing and Communications; IEEE 15th International Conference on Smart City; IEEE 3rd International Conference on Data Science and Systems (HPCC/SmartCity/DSS), 2017, pp. 186-191, doi: 10.1109/HPCC-SmartCity-DSS.2017.24.
+\bibitem{Mcheng}
+M. Cheng, Y. Zhang, Y. Su, J. M. Alvarez and H. Kong, "Curb Detection for Road and Sidewalk Detection," in IEEE Transactions on Vehicular Technology, vol. 67, no. 11, pp. 10330-10342, Nov. 2018, doi: 10.1109/TVT.2018.2865836.
+
+
+
+\end{thebibliography}
+\pagebreak
+\section*{Appendix-Contributions}
+\noindent \textbf{Keith Chester}-  (...plan to develop URDF for our specific delivery robot)
+
+\bigskip
+
+\noindent \textbf{Bob DeMont}- I have spent the bulk of the time learning the tools for the project.  I have a setup and functioning Linux virtual machine with ROS and Gazebo working.  I am new to Linux, Python and, of course, ROS and Gazebo.  I have progressed through section 5 of textbf{The Construct} courses, read a good portion of the ROS wiki and viewed virtually every video I can find involving ROS and Gazebo.  I'm able to create packages, nodes, topics and publish and subscribe.  I the next week I plan to study world development and begin to put together a world environment for the simulation involving a sidewalk along a building with various stationary obstacles including a dumpster, cone and mailbox.  Following that I'll learn to introduce dynamic obstacles .\\
+
+\end{multicols}
+
+\end{document}
