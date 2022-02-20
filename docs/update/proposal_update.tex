@@ -66,11 +66,29 @@ Final Submission  &  May 2 \\
 %\caption{Schedule}
 %\label{table:Sched}
 \end{center}
+
 \section*{Progress}
-We are still on track with the previously proposed schedule.  We have spent most of the time to date learning the tools (ROS/Gazebo/Python) needed to complete the project.  We have yet to complete world development which is scheduled for the next two weeks.  Keith is beginning to familiarize himself with the ROS Navigation Stack and how we can modify for our purposes.\\
-We've settled on a non-holonomic robot, (  )  wheeled robot using GPS input for a pre-determined, general path plan and LIDAR for more specific obstacle avoidance during operation.
+
+Our progress so far has consisted of a few key decisions (such as robot design) and significant efforts to familiarize ourselves with ROS tooling.
+
+\subsection*{Learning ROS}
+
+We are still on track with the previously proposed schedule. We are currently inudating ourselves in the chosen tooling for our projects. Bob DeMont is currently bringing himself up to speed with Linux and Python. Both he and Keith Chester are learning the internal architecture and common development patterns for ROS \cite{Construct}. Likewise, both are learning how to design for and utilize the Gazebo simulator. We have yet to complete world development which is scheduled for the within the next fortnight.
+
+\subsection*{Robot Choices}
+We've settled on a non-holonomic 4 wheeled robot. It will utilize GPS a sensor for a pre-determined, global path plan and LIDAR for more specific localied obstacle avoidance during operation. Other sensors (such as a camera) may be included on the robot to match capabilities seen in current delivery robots, but we will likely depend on LIDAR for mapping. We will assume that the odemetry measurements in the robot are without noise as we are experimenting with path planning and not sensor fusion or localization techniques.
+
+We will utilize existing ROS modules wherever possible to handle localization, mapping, and sensor feedback. We will, however, create custom implementations of key navigation algorithms to demonstrate our competency as per the project.
+
+\subsection*{Docker}
+During this time we also explored the use of Docker as a development tool. We began by referencing wikis maintained by the ROS organization to get our initial images configured \cite{ROS-Docker}. From there we read several blogs and sources attempting to find a balance of ease of approach with industry best practices. One notable suggestion, while focused on ROS2, talked at length about portable development environments complete with all necessary pieces \cite{Thackston}.
+
+While we utilized resources to familiarize ourselves with the tooling necessary to be successful in a ROS project, we dutifully recreated much of what we were working with in our containerized environments. Lessons-learned were collected and offered in the class discussion forum. It is our hope that these tips and instructions aid our classmates.
+
 \section*{Division of Labor}
-We plan extensive and equal collaboration on all aspects of the project to include coding, algorithm development, testing and submissions. Further delineation of work may occur as we determine proficiency in certain aspects of the project.  
+We plan extensive and equal collaboration on all aspects of the project to include coding, algorithm development, testing and submissions. Further delineation of work may occur as we determine proficiency in certain aspects of the project.
+
+
 \label{References}
 
 \bibliographystyle{abbrv}
@@ -81,13 +99,16 @@ We plan extensive and equal collaboration on all aspects of the project to inclu
 M. Kocsis, J. Buyer, N. Sußmann, R. Zöllner and G. Mogan, "Autonomous Grocery Delivery Service in Urban Areas," 2017 IEEE 19th International Conference on High Performance Computing and Communications; IEEE 15th International Conference on Smart City; IEEE 3rd International Conference on Data Science and Systems (HPCC/SmartCity/DSS), 2017, pp. 186-191, doi: 10.1109/HPCC-SmartCity-DSS.2017.24.
 \bibitem{Mcheng}
 M. Cheng, Y. Zhang, Y. Su, J. M. Alvarez and H. Kong, "Curb Detection for Road and Sidewalk Detection," in IEEE Transactions on Vehicular Technology, vol. 67, no. 11, pp. 10330-10342, Nov. 2018, doi: 10.1109/TVT.2018.2865836.
+\bibitem{Construct} https://www.theconstructsim.com/
+\bibitem{ROS-Docker} http://wiki.ros.org/docker/Tutorials/Docker
+\bibitem{Thackston} https://www.allisonthackston.com/articles/vscode-docker-ros2.html
 
 
 
 \end{thebibliography}
 \pagebreak
 \section*{Appendix-Contributions}
-\noindent \textbf{Keith Chester}-  (...plan to develop URDF for our specific delivery robot)
+\noindent \textbf{Keith Chester}-  After establishing best practices for ROS within Docker for rapid development and documenting it for the team, I have also been working hard at learning the internals of the ROS Navigation Stack, URDF/XARCO modeling for Gazebo, and Gazebo world creation. I will be creating the URDF for the robot model and working on the city street world we'll need for the final project simulation.
 
 \bigskip
 
