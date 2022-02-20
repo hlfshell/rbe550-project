@@ -73,10 +73,10 @@ Our progress so far has consisted of a few key decisions (such as robot design) 
 
 \subsection*{Learning ROS}
 
-We are still on track with the previously proposed schedule. We are currently inudating ourselves in the chosen tooling for our projects. Bob DeMont is currently bringing himself up to speed with Linux and Python. Both he and Keith Chester are learning the internal architecture and common development patterns for ROS \cite{Construct}. Likewise, both are learning how to design for and utilize the Gazebo simulator. We have yet to complete world development which is scheduled for the within the next fortnight.
+We are still on track with the previously proposed schedule. We are currently inudating ourselves in the chosen tooling for our projects. Bob DeMont is currently bringing himself up to speed with Linux and Python. Both he and Keith Chester are learning the internal architecture and common development patterns for ROS \cite{Construct}. Likewise, both are learning how to design for and utilize the Gazebo simulator. We have yet to complete world development which is scheduled for within the next fortnight.
 
 \subsection*{Robot Choices}
-We've settled on a non-holonomic 4 wheeled robot. It will utilize GPS a sensor for a pre-determined, global path plan and LIDAR for more specific localied obstacle avoidance during operation. Other sensors (such as a camera) may be included on the robot to match capabilities seen in current delivery robots, but we will likely depend on LIDAR for mapping. We will assume that the odemetry measurements in the robot are without noise as we are experimenting with path planning and not sensor fusion or localization techniques.
+We've settled on a non-holonomic 4 wheeled robot. It will utilize a GPS sensor for a pre-determined, global path plan and LIDAR for more specific localized obstacle avoidance during operation. Other sensors (such as a camera) may be included on the robot to match capabilities seen in current delivery robots, but we will likely depend on LIDAR for mapping. We will assume that the odometry measurements in the robot are without noise as we are experimenting with path planning and not sensor fusion or localization techniques.
 
 We will utilize existing ROS modules wherever possible to handle localization, mapping, and sensor feedback. We will, however, create custom implementations of key navigation algorithms to demonstrate our competency as per the project.
 
@@ -112,7 +112,7 @@ M. Cheng, Y. Zhang, Y. Su, J. M. Alvarez and H. Kong, "Curb Detection for Road a
 
 \bigskip
 
-\noindent \textbf{Bob DeMont}- I have spent the bulk of the time learning the tools for the project.  I have a setup and functioning Linux virtual machine with ROS and Gazebo working.  I am new to Linux, Python and, of course, ROS and Gazebo.  I have progressed through section 5 of textbf{The Construct} courses, read a good portion of the ROS wiki and viewed virtually every video I can find involving ROS and Gazebo.  I'm able to create packages, nodes, topics and publish and subscribe.  I the next week I plan to study world development and begin to put together a world environment for the simulation involving a sidewalk along a building with various stationary obstacles including a dumpster, cone and mailbox.  Following that I'll learn to introduce dynamic obstacles .\\
+\noindent \textbf{Bob DeMont}- I have spent the bulk of the time learning the tools for the project.  I have a setup and functioning Linux virtual machine with ROS and Gazebo working.  I am new to Linux, Python and, of course, ROS and Gazebo.  I have progressed through section 5 of \textbf{The Construct} courses, read a good portion of the ROS wiki and viewed virtually every video I can find involving ROS and Gazebo.  I'm able to create packages, nodes, topics and publish and subscribe.  In the next week I plan to study world development and begin to put together a world environment for the simulation involving a sidewalk along a building with various stationary obstacles including a dumpster, cone and mailbox.  Following that I'll learn to introduce dynamic obstacles .\\
 
 \end{multicols}
 
