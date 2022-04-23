@@ -79,7 +79,7 @@ _nodes=[
     Node(0, (800,300), 'start', [1]),
     Node(1, (655,300), 'waypoint', [0,2,21]),
     Node(2, (655,230), 'crosswalk', [1,3,4]),
-    Node(3, (660,200), 'corner', [2,38]),
+    Node(3, (660,200), 'corner', [2,47]),
     Node(4, (525,230), 'crosswalk', [2,18,19]),
     Node(5, (270,230), 'crosswalk', [15,16,6]),
     Node(6, (140,230), 'crosswalk', [5,7]),
@@ -114,13 +114,15 @@ _nodes=[
     Node(35, (1205,485), 'delivery', [34,36]),
     Node(36, (1205,305), 'delivery', [37,35]),
     Node(37, (1205,235), 'crosswalk', [36,38,39]),
-    Node(38, (1205,200), 'corner', [3,37]),
+    Node(38, (1205,200), 'corner', [47,37]),
     Node(39, (1335,235), 'crosswalk', [37,42,40]),
     Node(40, (1335,165), 'delivery', [39,41]),
     Node(41, (1335,25), 'delivery', [40]),
     Node(42, (1335,325), 'delivery', [39,43]),
     Node(43, (1335,445), 'corner', [42,44]),
-    Node(44, (1370,445), 'crosswalk', [33,43,45]),
-    Node(45, (1590,445), 'corner', [44,46]),
-    Node(46, (1590,65), 'delivery', [45])
+    Node(44, (1370,445), 'crosswalk', [33,43,48]),
+    Node(45, (1590,445), 'corner', [48,46]),
+    Node(46, (1590,65), 'delivery', [45]),
+    Node(47, (885,200), 'delivery', [3,38]),
+    Node(48, (1450,445), 'delivery', [45,44])
 ]
