@@ -1,6 +1,10 @@
 from math import cos, pi, sin
+from random import choice
+from time import time
+from typing import List
 import pygame
-from delivery.map import Map
+from delivery.global_planner import GlobalPlanner
+from delivery.map import Map, Node
 from delivery.state import State
 
 from delivery.vehicle import Vehicle
@@ -27,6 +31,8 @@ class World:
         self.vehicle: Vehicle = None
         self.map = Map.Get_Map()
 
+        self.global_path: List[Node] = None
+
         self._display_surface = pygame.display.set_mode(WINDOW_SIZE)
         pygame.display.set_caption("RBE550 Delivery Robot Project")
 
@@ -41,10 +47,31 @@ class World:
         self._display_surface.blit(self.bg_sprite, self.bg_sprite.get_rect())
 
         self.map.render(self._display_surface)
+        self.draw_global_path()
 
         if self.vehicle is not None:
             self.vehicle.render()
             self.vehicle.blit(self._display_surface)
+
+    def draw_global_path(self):
+        if self.global_path is None:
+            return
+        
+        if len(self.global_path) <= 1:
+            return
+        
+        color = (0, 255, 0)
+        drawn = self.global_path.copy()
+        first = drawn.pop(0)
+        second  = drawn.pop(0)
+        while True:
+            pygame.draw.line(self._display_surface, color, first.pixel_xy, second.pixel_xy, width=3)
+            first = second
+            if len(drawn) == 0:
+                break
+            second = drawn.pop(0)
+
+        pygame.display.update()
 
     def set_vehicle(self, vehicle: Vehicle):
         self.vehicle = vehicle
@@ -54,6 +81,25 @@ class World:
     
     def tick(self):
         pass
+
+    def global_plan(self):
+        goal = None
+        while goal == None:
+            node: Node = choice(list(self.map.nodes.values()))
+            if node.type == "delivery":
+                goal = node
+        
+        planner = GlobalPlanner(self.map, self.map.start, goal)
+        self.global_path = planner.search()
+
+    def test_global_planner(self):
+        time_start: float = 0.0
+        while True:
+            if time() - time_start >= 5.0:
+                self.global_plan()
+                time_start = time()
+            self.render()
+            pygame.event.get()
 
     def drive(self):
         while True:

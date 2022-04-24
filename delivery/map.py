@@ -1,4 +1,5 @@
 from __future__ import annotations
+from math import sqrt
 from typing import Dict, List, Tuple
 
 import pygame
@@ -20,6 +21,9 @@ class Node():
         self.type = type
         self.neighbors = neighbors
     
+    def distance_between(self, other: Node) -> float:
+        return sqrt((self.x - other.x)**2 + (self.y - other.y)**2)
+
     @property
     def pixel_xy(self) -> Tuple[int, int]:
         pixels_per_meter = 15
@@ -34,13 +38,26 @@ class Node():
             color = (0, 0, 255)
         return color
     
-    def __eq__(self, other: object) -> bool:
+    def __eq__(self, other: Node) -> bool:
+        if other is None:
+            return False
         return self.id == other.id
+
+    def __hash__(self) -> int:
+        return hash(self.id)
+    
+    def __lt__(self, other: Node) -> bool:
+        if other is None:
+            return False
+        return self.id < other.id
+
+    def __str__(self) -> str:
+        return f"{self.id}:{self.type}:({self.x, self.y})"
 
 class Map():
 
     def __init__(self):
-        self.nodes: Dict[id, Node] = {}
+        self.nodes: Dict[int, Node] = {}
 
     def add_node(self, node: Node):
         if node.id in self.nodes:
@@ -53,6 +70,10 @@ class Map():
             neighbor = self.nodes[neighbor_id]
             neighbors.append(neighbor)
         return neighbors
+
+    @property
+    def start(self) -> Node:
+        return self.nodes[0]
 
     def render(self, surface: pygame.Surface):
         # First, draw each line between neighbors
