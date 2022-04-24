@@ -1,7 +1,9 @@
 from __future__ import annotations
 
 from math import cos, pi, sin, sqrt
-from typing import List, Optional
+from typing import List, Optional, Tuple
+
+from numpy import arange
 
 class State():
 
@@ -40,13 +42,12 @@ class State():
 
         v_max = self.v_max
 
-        for v_left in range(-v_max, v_max, v_max/2):
-            for v_right in range(-v_max, v_max, v_max/2):
+        for v_left in arange(-v_max, v_max, v_max/2):
+            for v_right in arange(-v_max, v_max, v_max/2):
                 state = self.forward_kinematics(v_left, v_right, time_delta)
                 neighbors.append(state)
 
         return neighbors
-        
 
     def forward_kinematics(self, v_left: float, v_right: float, time_delta: float) -> State:
         thetadot = (self.r/self.L)*(v_right - v_left)
@@ -113,6 +114,11 @@ class State():
             thetadot=self.thetadot
         )
     
+    @property
+    def pixel_xy(self) -> Tuple[int, int]:
+        pixels_per_meter = 15
+        return (self.x * pixels_per_meter, self.y * pixels_per_meter)
+    
     def __eq__(self, other: State) -> bool:
         if other is None:
             return False
@@ -123,3 +129,14 @@ class State():
         if theta_difference > pi:
             theta_difference = (2*pi) - theta_difference
         return distance < 0.5 and theta_difference < 0.1
+    
+    def __hash__(self) -> int:
+        return hash(
+            (self.x, self.y, self.theta, self.xdot, self.ydot, self.thetadot)
+        )
+    
+    def __lt__(self, other: State) -> bool:
+        if other is None:
+            return False
+        return (self.x, self.y, self.theta) < \
+            (other.x, other.y, other.theta)

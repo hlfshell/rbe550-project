@@ -4,5 +4,6 @@ from delivery.world import World
 
 world = World()
 world.set_vehicle(Vehicle(State(53.333, 20, 0)))
-world.drive()
+# world.drive()
 # world.test_global_planner()
+world.test_local_planner()

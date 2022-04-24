@@ -4,6 +4,7 @@ from time import time
 from typing import List
 import pygame
 from delivery.global_planner import GlobalPlanner
+from delivery.local_planner import LocalPlanner
 from delivery.map import Map, Node
 from delivery.state import State
 
@@ -27,12 +28,11 @@ class World:
         self._obstacle_map: pygame.Surface = None
         self._map: pygame.Surface = None
 
-        self.goal = None
-
         self.vehicle: Vehicle = None
         self.map = Map.Get_Map()
 
         self.global_path: List[Node] = None
+        self.local_path: List[State] = None
 
         self._display_surface = pygame.display.set_mode(WINDOW_SIZE)
         pygame.display.set_caption("RBE550 Delivery Robot Project")
@@ -112,6 +112,48 @@ class World:
                 time_start = time()
             self.render()
             pygame.event.get()
+    
+    def test_local_planner(self):
+        time_start: float = time()
+        while True:
+            if time() - time_start >= 5.0:
+                self.global_plan()
+                time_start = time()
+            self.render()
+            pygame.event.get()
+
+            # Now we create local plan for each step
+            if self.global_path is None:
+                continue
+
+            global_path = self.global_path.copy()
+            current_node = global_path.pop(0)
+            current_vehicle_state = self.vehicle.state
+            planner_time_delta = 0.25
+            self.local_path = []
+            self.vehicle.path_time_delta = planner_time_delta
+            self.vehicle.path = []
+
+            while len(global_path) > 0:
+                planner = LocalPlanner(
+                    current_vehicle_state,
+                    (current_node.x, current_node.y),
+                    planner_time_delta,
+                    self.collision_detection,
+                    self._display_surface
+                )
+                try:
+                    path = planner.search()
+                    current_node = global_path.pop(0)
+                    if len(path) <= 1:
+                        continue
+
+                    self.vehicle.path += path[1:]
+                    current_vehicle_state = path[-1]
+                except Exception as e:
+                    print("Could not solve local planner path")
+                    raise e
+                    return
 
     def drive(self):
         while True:

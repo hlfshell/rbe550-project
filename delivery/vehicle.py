@@ -24,6 +24,7 @@ class Vehicle(pygame.sprite.Sprite):
         self.mask: pygame.mask.Mask = None
 
         self.path: List[State] = None
+        self.path_time_delta: float = 0.0
 
         self.render()
         
