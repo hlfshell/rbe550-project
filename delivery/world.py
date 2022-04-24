@@ -10,7 +10,8 @@ from delivery.state import State
 from delivery.vehicle import Vehicle
 
 
-BG_SPRITE = "./delivery/img/map.png" 
+BG_SPRITE = "./delivery/img/map.png"
+COLLISION_MAP = "./delivery/img/collision_map.png"
 WINDOW_SIZE = (1600, 800)
 
 class World:
@@ -38,6 +39,9 @@ class World:
 
         self.bg_sprite: pygame.Surface = pygame.image.load(BG_SPRITE).convert_alpha()
         self.bg_sprite = pygame.transform.scale(self.bg_sprite, WINDOW_SIZE)
+
+        self._collision_map: pygame.sprite.Group = pygame.sprite.Group()
+        self._collision_map.add(CollisionMap())
 
         self.render()
     
@@ -77,7 +81,15 @@ class World:
         self.vehicle = vehicle
 
     def collision_detection(self, vehicle) -> bool:
-        pass
+        off_map_collisions = pygame.sprite.spritecollide(
+            vehicle,
+            self._collision_map,
+            False,
+            pygame.sprite.collide_mask
+        )
+        if len(off_map_collisions) > 0:
+            return True
+        return False
     
     def tick(self):
         pass
@@ -131,8 +143,20 @@ class World:
             )
             self.vehicle.state = new_state
 
-            self.collision_detection(self.vehicle)
+            if self.collision_detection(self.vehicle):
+                print("COLLISION!")
 
             self.render()
             pygame.display.update()
             self._frame_per_sec.tick(self._fps)
+
+
+class CollisionMap(pygame.sprite.Sprite):
+
+    def __init__(self):
+        super().__init__()
+
+        self.surf = pygame.image.load(COLLISION_MAP).convert_alpha()
+        self.rect = self.surf.get_rect()
+        self.rect.topleft= [0,0]
+        self.mask = pygame.mask.from_surface(self.surf)

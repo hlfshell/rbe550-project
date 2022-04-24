@@ -24,6 +24,8 @@ class Vehicle(pygame.sprite.Sprite):
         self.mask: pygame.mask.Mask = None
 
         self.path: List[State] = None
+
+        self.render()
         
     def render(self):
         # angle = -1*degrees(self.state.theta + (pi/2))
