@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from math import pi, sqrt
+from math import cos, pi, sin, sqrt
 from typing import List
 
 class State():
@@ -32,6 +32,8 @@ class State():
 
         # Kinematic constants here
         self.v_max = 1.0
+        self.r = 1.0 # Wheel radius in meters
+        self.L = 1.0 # ???
     
     def get_neighbors(self, time_delta: float) -> List[State]:
         neighbors: List[State] = []
@@ -46,8 +48,22 @@ class State():
         return neighbors
         
 
-    def forward_kinematics(self, v_left: float, v_right: float) -> State:
-        pass
+    def forward_kinematics(self, v_left: float, v_right: float, time_delta: float) -> State:
+        thetadot = (self.r/self.L)
+        thetadelta = thetadot * time_delta
+        theta = self.theta + thetadelta
+
+        xdot = (self.r/2) * (v_left + v_right)*cos(theta)
+        ydot = (self.r/2) * (v_left + v_right)*sin(theta)
+        xdelta = xdot * time_delta
+        ydelta = ydot * time_delta
+
+        x = self.x + xdelta
+        y = self.y + ydelta
+        theta = self.theta + thetadelta
+
+        state = State(x, y, theta, xdot=xdot, ydot=ydot, thetadot=thetadot)
+        return state
 
     def distance_between(self, other: State) -> float:
         return sqrt((self.x - other.x)**2 + (self.y - other.y)**2)
