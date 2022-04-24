@@ -34,8 +34,8 @@ class State():
 
         # Kinematic constants here
         self.v_max = 0.79 #ws 1-.5m/sec with .1m radius wheel sb .79 radians/sec omega
-        self.r = 0.1 # Wheel radius in meters
-        self.L = 0.66
+        self.r = 0.5    # was 1.0 # Wheel radius in meters
+        self.L = .66 # was 1   ???
     
     def get_neighbors(self, time_delta: float) -> List[State]:
         neighbors: List[State] = []
