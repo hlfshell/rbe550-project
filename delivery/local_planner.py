@@ -1,5 +1,5 @@
 from collections import defaultdict
-from math import degrees, sqrt
+from math import atan, atan2, degrees, pi, sqrt
 from typing import Callable, Dict, List, Optional, Tuple
 
 import pygame
@@ -100,7 +100,15 @@ class LocalPlanner():
                     (neighbor.y - self.goal[1])**2)
                 distance_between = current.distance_between(neighbor)
 
-                heuristic_cost = 2 * distance_to_goal
+                heading_to_goal = atan2(
+                    (self.goal[1] - neighbor.y),
+                    (self.goal[0] - neighbor.x))
+
+                heading_difference = abs(heading_to_goal - neighbor.theta)
+                if heading_difference > pi:
+                    heading_difference = (2*pi) - heading_difference
+
+                heuristic_cost = (3 * distance_to_goal) + (1 * heading_difference)
                 node_cost = distance_between
 
                 total_cost = node_cost + heuristic_cost
