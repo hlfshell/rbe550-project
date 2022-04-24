@@ -79,8 +79,8 @@ class LocalPlanner():
         for neighbor in neighbors:
             # If we have already reached this state, we don't
             # need to retread over this ground
-            x = round(0.1 * round(neighbor.x/0.1),2)
-            y = round(0.1 * round(neighbor.y/0.1),2)
+            x = round(0.25 * round(neighbor.x/0.25),2)
+            y = round(0.25 * round(neighbor.y/0.25),2)
             theta = round(degrees(10) * round(neighbor.theta/degrees(10)),2)
             if not self.exists[x][y][theta]:
                 # Check to see if this position is valid
