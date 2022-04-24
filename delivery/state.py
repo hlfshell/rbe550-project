@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from math import cos, pi, sin, sqrt
-from typing import List
+from typing import List, Optional
 
 class State():
 
@@ -42,14 +42,14 @@ class State():
 
         for v_left in range(-v_max, v_max, v_max/2):
             for v_right in range(-v_max, v_max, v_max/2):
-                state = self.forward_kinematics
+                state = self.forward_kinematics(v_left, v_right, time_delta)
                 neighbors.append(state)
 
         return neighbors
         
 
     def forward_kinematics(self, v_left: float, v_right: float, time_delta: float) -> State:
-        thetadot = (self.r/self.L)
+        thetadot = (self.r/self.L)*(v_right - v_left)
         thetadelta = thetadot * time_delta
         theta = self.theta + thetadelta
 
@@ -60,10 +60,37 @@ class State():
 
         x = self.x + xdelta
         y = self.y + ydelta
-        theta = self.theta + thetadelta
 
         state = State(x, y, theta, xdot=xdot, ydot=ydot, thetadot=thetadot)
         return state
+
+    def connects(self, other: State, time_delta: float) -> Optional[State]:
+        distance = self.distance_between(other)
+        max_distance = self.v_max * time_delta
+        if distance > max_distance:
+            return None
+
+        # Ok, so it's possible. Let's calcultae the wheel
+        # velocities needed to make this move.
+        xdelta = other.x - self.x
+        ydelta = other.y - self.y
+        thetadelta = other.theta - self.theta
+
+        xdot = xdelta / time_delta
+        ydot = ydelta / time_delta
+        thetadot = thetadelta / time_delta
+
+        v_left = ((2*xdot)/(self.r*cos(other.theta))) - ((thetadot * self.L)/self.r)
+        v_right = ((thetadot*self.L)/self.r) + v_left
+
+        if abs(v_left) > self.v_max or abs(v_right) > self.v_max:
+            return None
+        else:
+            state = other.clone()
+            state.xdot = xdot
+            state.ydot = ydot
+            state.thetadot = thetadot
+            return state
 
     def distance_between(self, other: State) -> float:
         return sqrt((self.x - other.x)**2 + (self.y - other.y)**2)
@@ -74,14 +101,6 @@ class State():
         if theta_difference > pi:
             theta_difference = (2*pi) - theta_difference
         return distance + 4*(theta_difference)
-    
-    def connects(self, other: State, time_delta) -> bool:
-        distance = self.distance_between(other)
-        max_distance = self.v_max * time_delta
-        if distance > max_distance:
-            return False
-
-        pass
 
     def clone(self):
         return State(
