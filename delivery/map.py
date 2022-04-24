@@ -33,6 +33,9 @@ class Node():
         elif self.type == "delivery":
             color = (0, 0, 255)
         return color
+    
+    def __eq__(self, other: object) -> bool:
+        return self.id == other.id
 
 class Map():
 
