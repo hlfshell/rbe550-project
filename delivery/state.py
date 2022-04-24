@@ -33,9 +33,9 @@ class State():
         self.thetadot = thetadot
 
         # Kinematic constants here
-        self.v_max = 1.0
-        self.r = 1.0 # Wheel radius in meters
-        self.L = 1.0 # ???
+        self.v_max = .79 #ws 1-.5m/sec with .1m radius wheel sb .79 radians/sec omega
+        self.r = 0.5    # was 1.0 # Wheel radius in meters
+        self.L = .66 # was 1   ???
     
     def get_neighbors(self, time_delta: float) -> List[State]:
         neighbors: List[State] = []
