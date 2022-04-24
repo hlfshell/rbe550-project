@@ -5,7 +5,7 @@ import pygame
 from delivery.map import Map, Node
 from delivery.priority_queue import Queue
 
-MAX_STEPS = 2_000
+MAX_STEPS = 500
 
 class GlobalPlanner():
 
@@ -26,7 +26,7 @@ class GlobalPlanner():
         self.costs[self.start] = 0
         self.steps_taken = 0
     
-    def search(self):
+    def search(self) -> List[Node]:
         path: Optional[List[Node]] = None
 
         while path == None:
