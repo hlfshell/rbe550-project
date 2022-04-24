@@ -24,26 +24,28 @@ class State():
         self.theta = self.theta % (2*pi)
 
         if not exact:
-            self.x = round(self.x, 1)
-            self.y = round(self.y, 1)
-            self.theta = round(self.theta, 1)
+            self.x = round(self.x, 4)
+            self.y = round(self.y, 4)
+            self.theta = round(self.theta, 4)
         
         self.xdot = xdot
         self.ydot = ydot
         self.thetadot = thetadot
 
         # Kinematic constants here
-        self.v_max = 0.79 #ws 1-.5m/sec with .1m radius wheel sb .79 radians/sec omega
-        self.r = 0.5 # Wheel radius in meters
-        self.L = 0.66
+        self.v_max = 0.79 #0.79 #ws 1-.5m/sec with .1m radius wheel sb .79 radians/sec omega
+        self.r = 0.1 # Wheel radius in meters
+        self.L = 0.66 # Distance between wheels
     
     def get_neighbors(self, time_delta: float) -> List[State]:
         neighbors: List[State] = []
 
         v_max = self.v_max
 
-        for v_left in arange(-v_max, v_max, v_max/2):
-            for v_right in arange(-v_max, v_max, v_max/2):
+        for v_left in arange(-v_max/2, v_max, v_max/2):
+            for v_right in arange(-v_max/2, v_max, v_max/2):
+                if v_left <= 0 and v_right <= 0:
+                    continue
                 state = self.forward_kinematics(v_left, v_right, time_delta)
                 neighbors.append(state)
 
@@ -96,13 +98,6 @@ class State():
     def distance_between(self, other: State) -> float:
         return sqrt((self.x - other.x)**2 + (self.y - other.y)**2)
 
-    def transition_cost(self, other: State) -> float:
-        distance = self.distance_between(other)
-        theta_difference = abs(self.theta - other.theta)
-        if theta_difference > pi:
-            theta_difference = (2*pi) - theta_difference
-        return distance + 4*(theta_difference)
-
     def clone(self):
         return State(
             self.x,
@@ -140,3 +135,6 @@ class State():
             return False
         return (self.x, self.y, self.theta) < \
             (other.x, other.y, other.theta)
+    
+    def __str__(self) -> str:
+        return f"({self.x}, {self.y}, {self.theta})"

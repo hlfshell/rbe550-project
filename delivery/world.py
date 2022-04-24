@@ -116,7 +116,7 @@ class World:
     def test_local_planner(self):
         time_start: float = time()
         while True:
-            if time() - time_start >= 5.0:
+            if time() - time_start >= 3.0:
                 self.global_plan()
                 time_start = time()
             self.render()
@@ -127,14 +127,17 @@ class World:
                 continue
 
             global_path = self.global_path.copy()
+            print("got global path", global_path)
             current_node = global_path.pop(0)
             current_vehicle_state = self.vehicle.state
-            planner_time_delta = 0.25
+            planner_time_delta = 0.5
             self.local_path = []
             self.vehicle.path_time_delta = planner_time_delta
             self.vehicle.path = []
 
             while len(global_path) > 0:
+                print("state", current_vehicle_state)
+                print("goal", (current_node.x, current_node.y))
                 planner = LocalPlanner(
                     current_vehicle_state,
                     (current_node.x, current_node.y),
@@ -145,15 +148,16 @@ class World:
                 try:
                     path = planner.search()
                     current_node = global_path.pop(0)
-                    if len(path) <= 1:
+                    if len(path) < 1:
                         continue
 
                     self.vehicle.path += path[1:]
                     current_vehicle_state = path[-1]
                 except Exception as e:
+                    print(planner.steps_taken)
+                    print(len(planner.queue))
                     print("Could not solve local planner path")
                     raise e
-                    return
 
     def drive(self):
         while True:

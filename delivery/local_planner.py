@@ -79,28 +79,32 @@ class LocalPlanner():
         for neighbor in neighbors:
             # If we have already reached this state, we don't
             # need to retread over this ground
-            x = round(0.25 * round(neighbor.x/0.25),2)
-            y = round(0.25 * round(neighbor.y/0.25),2)
-            theta = round(degrees(10) * round(neighbor.theta/degrees(10)),2)
-            if not self.exists[x][y][theta]:
+            # x = round(0.05 * round(neighbor.x/0.05),2)
+            # y = round(0.05 * round(neighbor.y/0.05),2)
+            # x = round(neighbor.x, 2)
+            # y = round(neighbor.y, 2)
+            # theta = round(degrees(5) * round(neighbor.theta/degrees(5)),2)
+            # print(">>", neighbor.x, neighbor.y, neighbor.theta, x, y, theta)
+            # if not self.exists[x][y][theta]:
+            if neighbor not in self.parents:
                 # Check to see if this position is valid
                 shadow = Vehicle(neighbor)
                 if self.collision_detection(shadow):
                     continue
 
                 self.parents[neighbor] = current
-                self.exists[x][y][theta] = True
+                # self.exists[x][y][theta] = True
 
-                current_cost = self.costs[current]
                 distance_to_goal = sqrt(
                     (neighbor.x - self.goal[0])**2 +
                     (neighbor.y - self.goal[1])**2)
                 distance_between = current.distance_between(neighbor)
 
-                heuristic_cost = 5 * distance_to_goal
-                node_cost = current_cost + distance_between
+                heuristic_cost = 2 * distance_to_goal
+                node_cost = distance_between
 
                 total_cost = node_cost + heuristic_cost
+                # print(distance_to_goal, distance_between, heuristic_cost, node_cost, total_cost)
                 self.costs[neighbor] = total_cost
 
                 self.queue.push(neighbor, total_cost)
