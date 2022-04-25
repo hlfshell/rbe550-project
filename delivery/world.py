@@ -69,7 +69,13 @@ class World:
         first = drawn.pop(0)
         second  = drawn.pop(0)
         while True:
-            pygame.draw.line(self._display_surface, color, first.pixel_xy, second.pixel_xy, width=3)
+            pygame.draw.line(
+                self._display_surface,
+                color,
+                first.pixel_xy,
+                second.pixel_xy,
+                width=3
+            )
             first = second
             if len(drawn) == 0:
                 break
@@ -100,6 +106,8 @@ class World:
             node: Node = choice(list(self.map.nodes.values()))
             if node.type == "delivery":
                 goal = node
+
+        # goal = self.map.nodes[14]
         
         planner = GlobalPlanner(self.map, self.map.start, goal)
         self.global_path = planner.search()
@@ -107,7 +115,7 @@ class World:
     def test_global_planner(self):
         time_start: float = 0.0
         while True:
-            if time() - time_start >= 5.0:
+            if time() - time_start >= 1.0:
                 self.global_plan()
                 time_start = time()
             self.render()
@@ -135,7 +143,7 @@ class World:
             self.vehicle.path_time_delta = planner_time_delta
             self.vehicle.path = []
 
-            while len(global_path) > 0:
+            while True:
                 print("state", current_vehicle_state)
                 print("goal", (current_node.x, current_node.y))
                 planner = LocalPlanner(
@@ -147,6 +155,8 @@ class World:
                 )
                 try:
                     path = planner.search()
+                    if len(global_path) <= 0:
+                        break
                     current_node = global_path.pop(0)
                     if len(path) < 1:
                         continue
