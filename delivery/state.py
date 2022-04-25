@@ -24,9 +24,9 @@ class State():
         self.theta = self.theta % (2*pi)
 
         if not exact:
-            self.x = round(self.x, 4)
-            self.y = round(self.y, 4)
-            self.theta = round(self.theta, 4)
+            self.x = round(self.x, 2)
+            self.y = round(self.y, 2)
+            self.theta = round(self.theta, 2)
         
         self.xdot = xdot
         self.ydot = ydot

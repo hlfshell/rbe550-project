@@ -138,7 +138,7 @@ class World:
             print("got global path", global_path)
             current_node = global_path.pop(0)
             current_vehicle_state = self.vehicle.state
-            planner_time_delta = 0.5
+            planner_time_delta = 1
             self.local_path = []
             self.vehicle.path_time_delta = planner_time_delta
             self.vehicle.path = []
