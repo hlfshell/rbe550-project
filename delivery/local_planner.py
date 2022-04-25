@@ -81,9 +81,10 @@ class LocalPlanner():
             # need to retread over this ground
             # x = round(0.05 * round(neighbor.x/0.05),2)
             # y = round(0.05 * round(neighbor.y/0.05),2)
-            # x = round(neighbor.x, 2)
-            # y = round(neighbor.y, 2)
+            x = round(neighbor.x, 2)
+            y = round(neighbor.y, 2)
             # theta = round(degrees(5) * round(neighbor.theta/degrees(5)),2)
+            theta = round(neighbor.theta, 2)
             # print(">>", neighbor.x, neighbor.y, neighbor.theta, x, y, theta)
             # if not self.exists[x][y][theta]:
             if neighbor not in self.parents:
@@ -93,7 +94,7 @@ class LocalPlanner():
                     continue
 
                 self.parents[neighbor] = current
-                # self.exists[x][y][theta] = True
+                self.exists[x][y][theta] = True
 
                 distance_to_goal = sqrt(
                     (neighbor.x - self.goal[0])**2 +
@@ -105,10 +106,12 @@ class LocalPlanner():
                     (self.goal[0] - neighbor.x))
 
                 heading_difference = abs(heading_to_goal - neighbor.theta)
+                heading_difference = heading_difference % (2*pi)
                 if heading_difference > pi:
                     heading_difference = (2*pi) - heading_difference
 
-                heuristic_cost = (3 * distance_to_goal) + (1 * heading_difference)
+                # heuristic_cost = (3 * distance_to_goal) + (0.5 * heading_difference)
+                heuristic_cost = (0.5 * distance_to_goal) + (0.5 * heading_difference)
                 node_cost = distance_between
 
                 total_cost = node_cost + heuristic_cost
@@ -117,5 +120,5 @@ class LocalPlanner():
 
                 self.queue.push(neighbor, total_cost)
         
-            # Draw a dot for the current considered spot
-            self.surface.fill((255, 0, 0), (neighbor.pixel_xy, (2, 2)))
+                # Draw a dot for the current considered spot
+                self.surface.fill((255, 0, 0), (neighbor.pixel_xy, (2, 2)))

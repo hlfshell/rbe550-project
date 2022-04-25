@@ -42,10 +42,12 @@ class State():
 
         v_max = self.v_max
 
-        for v_left in arange(-v_max/2, v_max, v_max/2):
-            for v_right in arange(-v_max/2, v_max, v_max/2):
-                if v_left <= 0 and v_right <= 0:
+        for v_left in arange(-v_max, v_max, v_max/2):
+            for v_right in arange(-v_max, v_max, v_max/2):
+                if v_left == 0 and v_right == 0:
                     continue
+                # if v_left < 0 and v_right < 0 and v_left == v_right:
+                    # continue
                 state = self.forward_kinematics(v_left, v_right, time_delta)
                 neighbors.append(state)
 
