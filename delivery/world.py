@@ -6,6 +6,7 @@ import pygame
 from delivery.global_planner import GlobalPlanner
 from delivery.local_planner import LocalPlanner
 from delivery.map import Map, Node
+from delivery.obstacle import Obstacle
 from delivery.state import State
 
 from delivery.vehicle import Vehicle
@@ -43,6 +44,8 @@ class World:
         self._collision_map: pygame.sprite.Group = pygame.sprite.Group()
         self._collision_map.add(CollisionMap())
 
+        self.obstacles: List[Obstacle] = Obstacle.Load_Obstacles()
+
         self.render()
     
     def render(self):
@@ -51,6 +54,8 @@ class World:
         self._display_surface.blit(self.bg_sprite, self.bg_sprite.get_rect())
 
         self.map.render(self._display_surface)
+        for obstacle in self.obstacles:
+            obstacle.render(self._display_surface)
         self.draw_global_path()
 
         if self.vehicle is not None:
