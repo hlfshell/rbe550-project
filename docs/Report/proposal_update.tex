@@ -21,14 +21,13 @@
 \restylefloat{table}
 
 
-\title{Autonomous Operation for Last-Mile Food, Grocery, and Goods Delivery on an Suburban Sidewalk\\
-\vspace{5mm}
-\large RBE550-Spring 2022 }
+\title{Autonomous Operation for Last-Mile Food, Grocery, and Goods Delivery on an Urban Sidewalk-Project Update }
 \author{Keith Chester, Bob DeMont}
-\date{May 5, 2022}
+\date{February 21, 2022}
 
 \begin{document}
 \maketitle
+
 
 \begin{multicols}{2}
 \section*{Abstract}
@@ -40,14 +39,55 @@ Last mile delivery has been a growing issue with the increase in e-commerce over
 \section*{Goals}
 Our goal is to create planning and execution algorithms to permit autonomous navigation and avoidance of both static (mailboxes, trashcans, signs)and dynamic obstacles (people, cars) while following sidewalk rules (crosswalks etc).
 
-\section*{Methods}
+\section*{Proposed Methods}
 We plan to explore various navigation, collision detection and avoidance methods implemented in Python to successfully navigate around static obstacles, avoid dynamic obstacles  and reach the destination in a simulated urban environment in Gazebo.
 
-\section*{Results}
+\section*{Expected Results}
 We expect to create a Gazebo-based simulation to navigate from the store to a nearby, ground level delivery address via sidewalks.  Along the way, we plan to encounter static obstacles such as fire hydrants, garbage cans and mailboxes.  We also expect to encounter moving obstacles like people, cars, or other robots.  Through this we will avoid collisions to arrive at the delivery destination while following sidewalk rules.
+
+\section*{Proposed Schedule}
+Our originally proposed schedule is as follows:
+
+\begin{center}
+\begin{tabular}{|cc|}
+\hline
+Milestone & Date  \\
+\hline
+Proposal  &  Feb 1 \\
+Gazebo learning  &  Feb 1-18 \\
+Status Update  &  Feb 21 \\
+Sample environment & Feb 28\\
+Planning algorithm & Mar 14\\
+Obstacle avoidance algorithms & Apr 11\\
+Final Writeup and Presentation & Apr 25-29\\
+Final Submission  &  May 2 \\
+\hline
+\end{tabular}
+%\caption{Schedule}
+%\label{table:Sched}
+\end{center}
+
+\section*{Progress}
+
+Our progress so far has consisted of a few key decisions (such as robot design) and significant efforts to familiarize ourselves with ROS tooling.
+
+\subsection*{Learning ROS}
+
+We are still on track with the previously proposed schedule. We are currently inudating ourselves in the chosen tooling for our projects. Bob DeMont is currently bringing himself up to speed with Linux and Python. Both he and Keith Chester are learning the internal architecture and common development patterns for ROS \cite{Construct}. Likewise, both are learning how to design for and utilize the Gazebo simulator. We have yet to complete world development which is scheduled for within the next fortnight.
 
 \subsection*{Robot Choices}
 We've settled on a non-holonomic 4 wheeled robot. It will utilize a GPS sensor for a pre-determined, global path plan and LIDAR for more specific localized obstacle avoidance during operation. Other sensors (such as a camera) may be included on the robot to match capabilities seen in current delivery robots, but we will likely depend on LIDAR for mapping. We will assume that the odometry measurements in the robot are without noise as we are experimenting with path planning and not sensor fusion or localization techniques.
+
+We will utilize existing ROS modules wherever possible to handle localization, mapping, and sensor feedback. We will, however, create custom implementations of key navigation algorithms to demonstrate our competency as per the project.
+
+\subsection*{Docker}
+During this time we also explored the use of Docker as a development tool. We began by referencing wikis maintained by the ROS organization to get our initial images configured \cite{ROS-Docker}. From there we read several blogs and sources attempting to find a balance of ease of approach with industry best practices. One notable suggestion, while focused on ROS2, talked at length about portable development environments complete with all necessary pieces \cite{Thackston}.
+
+While we utilized resources to familiarize ourselves with the tooling necessary to be successful in a ROS project, we dutifully recreated much of what we were working with in our containerized environments. Lessons-learned were collected and offered in the class discussion forum. It is our hope that these tips and instructions aid our classmates.
+
+\section*{Division of Labor}
+We plan extensive and equal collaboration on all aspects of the project to include coding, algorithm development, testing and submissions. Further delineation of work may occur as we determine proficiency in certain aspects of the project.
+
 
 \label{References}
 
@@ -68,10 +108,11 @@ M. Cheng, Y. Zhang, Y. Su, J. M. Alvarez and H. Kong, "Curb Detection for Road a
 \end{thebibliography}
 \pagebreak
 \section*{Appendix-Contributions}
-\noindent \textbf{Keith Chester}-  
+\noindent \textbf{Keith Chester}-  After establishing best practices for ROS within Docker for rapid development and documenting it for the team, I have also been working hard at learning the internals of the ROS Navigation Stack, URDF/XARCO modeling for Gazebo, and Gazebo world creation. I will be creating the URDF for the robot model and working on the city street world we'll need for the final project simulation.
+
 \bigskip
 
-\noindent \textbf{Bob DeMont}- 
+\noindent \textbf{Bob DeMont}- I have spent the bulk of the time learning the tools for the project.  I have a setup and functioning Linux virtual machine with ROS and Gazebo working.  I am new to Linux, Python and, of course, ROS and Gazebo.  I have progressed through section 5 of \textbf{The Construct} courses, read a good portion of the ROS wiki and viewed virtually every video I can find involving ROS and Gazebo.  I'm able to create packages, nodes, topics and publish and subscribe.  In the next week I plan to study world development and begin to put together a world environment for the simulation involving a sidewalk along a building with various stationary obstacles including a dumpster, cone and mailbox.  Following that I'll learn to introduce dynamic obstacles .\\
 
 \end{multicols}
 
