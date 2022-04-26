@@ -50,7 +50,7 @@ class Obstacle(pygame.sprite.Sprite):
             Obstacle('cone', (535,215), 0),
             Obstacle('cone', (535,230), 0),
             Obstacle('cone', (205,235), 0),
-            Obstacle('cone', (150,230), 0)
+            Obstacle('cone', (150,220), 0)
         ]
 
     @staticmethod
