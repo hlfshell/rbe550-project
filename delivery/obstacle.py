@@ -44,7 +44,7 @@ class Obstacle(pygame.sprite.Sprite):
             Obstacle('bike', (890,445), 0),
             Obstacle('cone', (870,750), 0),
             Obstacle('cone', (765,735), 0),
-            Obstacle('cone', (1210,193), 0),
+            Obstacle('cone', (1215,185), 0),
             Obstacle('cone', (1270,237), 0),
             Obstacle('cone', (1320,255), 0),
             Obstacle('cone', (535,215), 0),
