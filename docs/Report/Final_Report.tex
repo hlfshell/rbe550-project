@@ -32,22 +32,56 @@
 
 \begin{multicols}{2}
 \section*{Abstract}
-The purpose of the project is to simulate successful autonomous navigation of a delivery robot along sidewalks in a busy urban environment from store to a delivery address on ground level.
+The purpose of the project is to simulate successful autonomous navigation of a delivery robot along sidewalks in a busy suburban environment from store to a delivery address on ground level.  It demonstrates global planning for high-level route planning with a hand-off to a local planner for obstacle avoidance.
 
 \section*{Background}
 Last mile delivery has been a growing issue with the increase in e-commerce over at least the last 8 years with each year growing from 15-30\% from the year before \cite{Ecom}.  Since much of this final delivery is accomplished via vehicles, the has been an accompanying call for reduced emissions.  A McKinsey study estimates that this could lead to a 25\% increase in CO2 emission in cities \cite{Emiss}.  Most recently, the COVID pandemic with its isolation mandates have led to even greater demand for delivery of not only goods but also everyday essentials such as meals, groceries, and prescription medicine.  This needed to be accomplished with minimal human contact while fewer humans were available due to quarantines and employee availability.  For grocery delivery, the need for fastest route planning is also necessary due to the presence of perishables and temperature sensitive cargo - or, in other words, people prefer their meals hot and their frozen goods cold. Cheng et al \cite{Mcheng} have shown efficient curb detection to set the limits of the robot's path.
 
 \section*{Goals}
-Our goal is to create planning and execution algorithms to permit autonomous navigation and avoidance of both static (mailboxes, trashcans, signs)and dynamic obstacles (people, cars) while following sidewalk rules (crosswalks etc).
-
-\section*{Methods}
-We plan to explore various navigation, collision detection and avoidance methods implemented in Python to successfully navigate around static obstacles, avoid dynamic obstacles  and reach the destination in a simulated urban environment in Gazebo.
-
-\section*{Results}
-We expect to create a Gazebo-based simulation to navigate from the store to a nearby, ground level delivery address via sidewalks.  Along the way, we plan to encounter static obstacles such as fire hydrants, garbage cans and mailboxes.  We also expect to encounter moving obstacles like people, cars, or other robots.  Through this we will avoid collisions to arrive at the delivery destination while following sidewalk rules.
+Our goal is to create planning and execution algorithms to permit autonomous navigation and avoidance of both static (dumpsters, trashcans, traffic cones, garbage cans and garbage bags) and dynamic obstacles (people, cars) while following sidewalk rules (staying on the sidewalk and crossing at crosswalks etc).
 
 \subsection*{Robot Choices}
-We've settled on a non-holonomic 4 wheeled robot. It will utilize a GPS sensor for a pre-determined, global path plan and LIDAR for more specific localized obstacle avoidance during operation. Other sensors (such as a camera) may be included on the robot to match capabilities seen in current delivery robots, but we will likely depend on LIDAR for mapping. We will assume that the odometry measurements in the robot are without noise as we are experimenting with path planning and not sensor fusion or localization techniques.
+After research of the prevailing designs for this type of implementation, we've settled on a non-holonomic 6 wheeled robot using skid steering. It will utilize a GPS sensor for a pre-determined, global path plan and simulated LIDAR for more specific localized obstacle avoidance during operation. 
+
+ We will assume that the odometry measurements in the robot are without noise as we are experimenting with path planning and not sensor fusion or localization techniques.
+
+\section*{Methods}
+\noindent \textbf{Global map}.  The overall map is overlayed with designated waypoints which may be turns, crosswalks, or delivery addresses.  This generates a master map of feasible routes which is translated into a graph representation for optimal global route selection via a number of algorithms\\
+\begin{figure}[H]
+   \centering
+    \includegraphics[width = 1\columnwidth]{figures/routemap.png}
+     \label{fig:routemap}
+     \caption{Global Route Map}
+\end{figure}
+\noindent We selected a simple A* algorithm for global path selection.  With a given route map, no complexity is involved.  Each path segment returned represents a leg of the global route between waypoints.  Each leg is then, in turn, passed to the local planner which uses a slightly more complex A* to account for collision detection and reject off-limits positions.
+\begin{figure}[H]
+   \centering
+    \includegraphics[width = 1\columnwidth]{figures/astar.png}
+     \label{fig:astar}
+     \caption{A* Local Planner}
+\end{figure}
+\noindent \textbf{Simulation}. For simulating the environment we chose to use Pygame to capitalize on the collision detecting built into the sprite class.  A mask of the off-limits areas creates curb and building limits for our robot's movement.
+\begin{figure}[H]
+   \centering
+    \includegraphics[width = 1\columnwidth]{figures/mask.png}
+     \label{fig:mask}
+     \caption{Initial Collision Map}
+\end{figure}
+
+\noindent \textbf{Obstacles}. In addition to off limits areas (buildings and streets less crosswalks) we place other obstacles into the environment.  These took the form of trashcans, trash bags, bicycles, dumpsters and traffic cones.  These obstacles were, of course, unknown to the global planner but register for the local planner as it seeks a path.  As part of the obstacle set, moving vehicles will be included on the roads to be avoided at the crosswalks.
+\begin{figure}[H]
+   \centering
+    \includegraphics[width = 1\columnwidth]{figures/obstacles.png}
+     \label{fig:obstacles}
+     \caption{Obstacle Set}
+\end{figure}
+
+
+
+The kinematics for the robot are modeled on a diwheel design.
+\section*{Results}
+We e
+
 
 \label{References}
 
