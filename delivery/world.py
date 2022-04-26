@@ -91,7 +91,8 @@ class World:
     def set_vehicle(self, vehicle: Vehicle):
         self.vehicle = vehicle
 
-    def collision_detection(self, vehicle) -> bool:
+    def collision_detection(self, vehicle: Vehicle) -> bool:
+        # Map collisions first
         off_map_collisions = pygame.sprite.spritecollide(
             vehicle,
             self._collision_map,
@@ -100,6 +101,18 @@ class World:
         )
         if len(off_map_collisions) > 0:
             return True
+        
+        # Then obstacles
+        for obstacle in self.obstacles:
+            if obstacle.rect.colliderect(vehicle.rect):
+                offset = (
+                    vehicle.rect[0] - obstacle.rect[0],
+                    vehicle.rect[1] - obstacle.rect[1]
+                )
+                collisions = obstacle.mask.overlap(vehicle.mask, offset)
+                if collisions is not None and len(collisions) > 0:
+                    return True
+
         return False
     
     def tick(self):
