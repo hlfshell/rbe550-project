@@ -81,13 +81,13 @@ class LocalPlanner():
             # need to retread over this ground
             # x = round(0.05 * round(neighbor.x/0.05),2)
             # y = round(0.05 * round(neighbor.y/0.05),2)
-            x = round(neighbor.x, 2)
-            y = round(neighbor.y, 2)
+            x = round(neighbor.x, 1)
+            y = round(neighbor.y, 1)
             # theta = round(degrees(5) * round(neighbor.theta/degrees(5)),2)
             theta = round(neighbor.theta, 2)
             # print(">>", neighbor.x, neighbor.y, neighbor.theta, x, y, theta)
-            # if not self.exists[x][y][theta]:
-            if neighbor not in self.parents:
+            if not self.exists[x][y][theta]:
+            # if neighbor not in self.parents:
                 # Check to see if this position is valid
                 shadow = Vehicle(neighbor)
                 if self.collision_detection(shadow):
