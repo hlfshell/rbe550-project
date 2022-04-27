@@ -21,7 +21,7 @@
 \restylefloat{table}
 
 
-\title{Autonomous Operation for Last-Mile Food, Grocery, and Goods Delivery on an Suburban Sidewalk\\
+\title{Autonomous Operation for Last-Mile Food, Grocery, and Goods Delivery on a Suburban Sidewalk\\
 \vspace{5mm}
 \large RBE550-Spring 2022 }
 \author{Keith Chester, Bob DeMont}
@@ -40,20 +40,34 @@ Last mile delivery has been a growing issue with the increase in e-commerce over
 \section*{Goals}
 Our goal is to create planning and execution algorithms to permit autonomous navigation and avoidance of both static (dumpsters, trashcans, traffic cones, garbage cans and garbage bags) and dynamic obstacles (people, cars) while following sidewalk rules (staying on the sidewalk and crossing at crosswalks etc).
 
-\subsection*{Robot Choices}
-After research of the prevailing designs for this type of implementation, we've settled on a non-holonomic 6 wheeled robot using skid steering. It will utilize a GPS sensor for a pre-determined, global path plan and simulated LIDAR for more specific localized obstacle avoidance during operation. 
+\subsection*{Robot Choice}
+\textbf{Design} After research of the prevailing designs for this type of application, we've settled on a non-holonomic 6 wheeled robot using skid steering. It uses a simulated GPS sensor for a pre-determined, global path plan and simulated LIDAR for more specific localized obstacle avoidance during operation. \\
+\vspace{2mm}\\
+\noindent \textbf{Kinematics.} The kinematics for the robot are modeled on a diwheel design.  This resulted in the following state transition functions:
+\begin{equation}
+\begin{split}
+\dot{x}&=r(u_r+u_L)\cos\theta\\
+\dot{y}&=r(u_r+u_L)\sin\theta\\
+\dot{\theta}&=\frac{r}{L}(u_r-u_L)\\
+\end{split}
+\end{equation}
+\noindent where$ L$ is the distance between the wheels, in our case .66 meters,  $r$ is the radius of the wheels (.1m) and $u$ is the rotational velocity of wheels of the left and right sides.\\
 
- We will assume that the odometry measurements in the robot are without noise as we are experimenting with path planning and not sensor fusion or localization techniques.
-
+\begin{figure}[H]
+   \centering
+    \includegraphics[width = .75\columnwidth]{figures/delbot.png}
+     \label{fig:delbot}
+     \caption{Robot Model}
+\end{figure}
 \section*{Methods}
-\noindent \textbf{Global map}.  The overall map is overlayed with designated waypoints which may be turns, crosswalks, or delivery addresses.  This generates a master map of feasible routes which is translated into a graph representation for optimal global route selection via a number of algorithms\\
+\noindent \textbf{Global map}.  The overall map is overlayed with designated waypoints which may be turns, crosswalks, or delivery addresses.  This generates a master map of feasible routes which is translated into a graph representation for optimal global route selection via a number of algorithms.  Below demonstrates the environment map as well as the waypoint/graph representation.\\
 \begin{figure}[H]
    \centering
     \includegraphics[width = 1\columnwidth]{figures/routemap.png}
      \label{fig:routemap}
      \caption{Global Route Map}
 \end{figure}
-\noindent We selected a simple A* algorithm for global path selection.  With a given route map, no complexity is involved.  Each path segment returned represents a leg of the global route between waypoints.  Each leg is then, in turn, passed to the local planner which uses a slightly more complex A* to account for collision detection and reject off-limits positions.
+\noindent \textbf{Planners} We selected a simple A* algorithm for global path selection.  With a given route map, no complexity is involved.  Each path segment returned represents a leg of the global route between waypoints.  Each leg is then, in turn, passed to the local planner which uses a slightly more complex A* to account for collision detection and reject off-limits positions.
 \begin{figure}[H]
    \centering
     \includegraphics[width = 1\columnwidth]{figures/astar.png}
@@ -68,7 +82,7 @@ After research of the prevailing designs for this type of implementation, we've 
      \caption{Initial Collision Map}
 \end{figure}
 
-\noindent \textbf{Obstacles}. In addition to off limits areas (buildings and streets less crosswalks) we place other obstacles into the environment.  These took the form of trashcans, trash bags, bicycles, dumpsters and traffic cones.  These obstacles were, of course, unknown to the global planner but register for the local planner as it seeks a path.  As part of the obstacle set, moving vehicles will be included on the roads to be avoided at the crosswalks.
+\noindent \textbf{Obstacles}. In addition to off limits areas (buildings and streets-less-crosswalks) we place other obstacles into the environment.  These took the form of trashcans, trash bags, bicycles, dumpsters and traffic cones.  These obstacles were, of course, unknown to the global planner but register for the local planner as it seeks a path.  As part of the obstacle set, moving vehicles will be included on the roads to be avoided at the crosswalks.
 \begin{figure}[H]
    \centering
     \includegraphics[width = 1\columnwidth]{figures/obstacles.png}
@@ -77,10 +91,11 @@ After research of the prevailing designs for this type of implementation, we've 
 \end{figure}
 
 
-
-The kinematics for the robot are modeled on a diwheel design.
 \section*{Results}
-We e
+We obviously tested in phases as we constructed.  The global planner worked flawlessly  as the first part tested after creation of the environment and global network.  No difficulties were encountered.  The local planner required some tuning of state variables to simply the question of "have we been her before?".  Initially small variations which were essentially the same state registered as different and bogged calculations.  As we incorporated some rounding, performance improved. \\
+Integrating global and local planners worked well.  The global path handoff was successful and the local search found a mostly direct path.  Incorporating obstacles brought to light some interesting challenges.  If the obstacle happened to be covering the waypoint, it was impossible for the local search to complete.  One strategy might have been to abandon the immediate waypoint after a certain number of attempts and try to proceed to the next waypoint.  We chose instead to insure obstacles weren't directly on top of waypoints.  After that, we were able to navigate around all obstacles.  Some took longer that others depending on the collision space, but all eventually solved.  Moving obstacles....
+
+\section*{Conclusions}
 
 
 \label{References}
@@ -102,10 +117,12 @@ M. Cheng, Y. Zhang, Y. Su, J. M. Alvarez and H. Kong, "Curb Detection for Road a
 \end{thebibliography}
 \pagebreak
 \section*{Appendix-Contributions}
-\noindent \textbf{Keith Chester}-  
+\noindent \textbf{Keith Chester}-Keith did most of the Python coding for the team.  We both participated in debugging efforts and finalization of the submissions and feel the workload was evenly distributed.
 \bigskip
 
-\noindent \textbf{Bob DeMont}- 
+\noindent \textbf{Bob DeMont}-Bob took care of the fiddly work of obtaining graphics, sorting out coordinates, tuning parameters and drafting the presentations and report.  We both participated in debugging efforts and finalization of the submissions and feel the workload was evenly distributed.
+ 
+ 
 
 \end{multicols}
 
