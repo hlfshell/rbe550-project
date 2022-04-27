@@ -3,6 +3,7 @@ from random import choice
 from time import time
 from typing import List
 import pygame
+from delivery.car import Car, CarPaths
 from delivery.global_planner import GlobalPlanner
 from delivery.local_planner import LocalPlanner
 from delivery.map import Map, Node
@@ -46,6 +47,8 @@ class World:
 
         self.obstacles: List[Obstacle] = Obstacle.Load_Obstacles()
 
+        self.cars: List[Car] = []
+
         self.render()
     
     def render(self):
@@ -61,6 +64,15 @@ class World:
         if self.vehicle is not None:
             self.vehicle.render()
             self.vehicle.blit(self._display_surface)
+
+        for car in self.cars:
+            car.render()
+            car.blit(self._display_surface)
+
+    def tick(self):
+        time_delta = 1/self._fps
+        for car in self.cars:
+            car.tick(time_delta)
 
     def draw_global_path(self):
         if self.global_path is None:
@@ -114,9 +126,6 @@ class World:
                     return True
 
         return False
-    
-    def tick(self):
-        pass
 
     def global_plan(self):
         goal = None
@@ -130,6 +139,17 @@ class World:
         
         planner = GlobalPlanner(self.map, self.map.start, goal)
         self.global_path = planner.search()
+
+    def test_cars(self):
+        for path in CarPaths:
+            self.cars.append(Car(path))
+
+        while True:
+            self.tick()
+            self.render()
+            pygame.display.update()
+            self._frame_per_sec.tick(self._fps)
+            pygame.display.update()
 
     def test_global_planner(self):
         time_start: float = 0.0

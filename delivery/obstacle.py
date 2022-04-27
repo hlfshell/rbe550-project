@@ -3,8 +3,6 @@ from math import pi, degrees
 from typing import List, Tuple
 import pygame
 
-def _sprite(type: str):
-    return 
 
 class Obstacle(pygame.sprite.Sprite):
     def __init__(
@@ -60,7 +58,7 @@ class Obstacle(pygame.sprite.Sprite):
         ]
 
     @staticmethod
-    def Load_Sprite( type: str) -> pygame.sprite.Sprite:
+    def Load_Sprite(type: str) -> pygame.surface.Surface:
         return pygame.image.load(
             f"./delivery/img/{type}.png"
         ).convert_alpha()
