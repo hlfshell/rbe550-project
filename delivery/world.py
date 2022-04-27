@@ -147,9 +147,9 @@ class World:
         while True:
             self.tick()
             self.render()
+            pygame.event.get()
             pygame.display.update()
             self._frame_per_sec.tick(self._fps)
-            pygame.display.update()
 
     def test_global_planner(self):
         time_start: float = 0.0

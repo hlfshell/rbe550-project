@@ -32,12 +32,21 @@ class Car():
         first = path.pop(0)
         second = path.pop(0)
         while True:
+            first_xy = (
+                first[0] / pixels_per_meter,
+                first[1] / pixels_per_meter
+            )
+            second_xy = (
+                second[0] / pixels_per_meter,
+                second[1] / pixels_per_meter
+            )
             distance_between = sqrt(
-                (first[0] - second[0])**2 +
-                (first[1] - second[1])**2
+                (first_xy[0] - second_xy[0])**2 +
+                (first_xy[1] - second_xy[1])**2
             )
             time_to_travel = distance_between / self.v
-            self.path_times.append(time_to_travel)
+            time_at = time_to_travel + self.path_times[-1]
+            self.path_times.append(time_at)
             first = second
             if len(path) == 0:
                 break
@@ -62,9 +71,10 @@ class Car():
             self.image,
             angle
         )
+
         self.rect = self.sprite.get_rect(center=self.pixel_xy)
         self.mask = pygame.mask.from_surface(self.sprite)
-    
+
     def blit(self, surface: pygame.Surface):
         surface.blit(self.sprite, self.rect)
     
@@ -73,17 +83,22 @@ class Car():
         # from.
         self.time += time_delta
 
-        for index, t in enumerate(self.path_times):
+        index = 0
+        for current_index, t in enumerate(self.path_times):
+            print(">>", time_delta, self.time, t)
             if self.time < t:
+                index = current_index
                 break
         
         # If we are at the end, this car is finished
         if index == len(self.path_times) - 1:
+            print("done")
             self.path_finished = True
             return
         
         # We actually want the prior index
         index = index - 1
+        print("CHOSEN INDEX", index)
 
         node = self.path[0]
 
