@@ -20,7 +20,7 @@ class Car():
         self.y = self.path[0][1] / pixels_per_meter
         self.theta = self.path[0][2]
 
-        v_max = 12
+        v_max = 12 
         v_min = 6
         self.v = ((v_max-v_min)*random()) + v_min
 
@@ -83,34 +83,59 @@ class Car():
         # from.
         self.time += time_delta
 
-        index = 0
-        for current_index, t in enumerate(self.path_times):
-            print(">>", time_delta, self.time, t)
-            if self.time < t:
-                index = current_index
+        #index = 0
+        current_index=0
+
+        #this tells us where the time is in the list of path times
+        for i in range(len(self.path_times)-1):
+            if self.time>= self.path_times[i] and self.time<self.path_times[i+1]:
+                current_index=i
+                next_index=i+1
                 break
+    
+        # for current_index, t in enumerate(self.path_times):
+        #     print(">>", time_delta, self.time, t)
+        #     if self.time < t:
+        #         index = current_index
+        #         break
         
         # If we are at the end, this car is finished
-        if index == len(self.path_times) - 1:
+        if current_index == len(self.path_times) - 1:
             print("done")
             self.path_finished = True
             return
         
         # We actually want the prior index
-        index = index - 1
-        print("CHOSEN INDEX", index)
+        #index = index - 1
+        #print("CHOSEN INDEX", index)
 
-        node = self.path[0]
+        prev_node = self.path[current_index]
+        next_node=self.path[next_index]
+
+        x_vector=next_node[0]-prev_node[0]
+        y_vector=next_node[1]-prev_node[1]
+        theta_vector=next_node[2]-prev_node[2]
 
         pixels_per_meter = 15
+        if self.x + self.v*time_delta*cos(self.theta)>=(prev_node[0]+x_vector)/15:  #im not quite to the next waypoint
+            self.x = self.x + self.v*time_delta*cos(self.theta)                #my new point is a step inthe direction
+        else:
+            self.x = next_node[0]/15                                              #my new point is the waypoint
+        if self.y + self.v*time_delta*sin(self.theta)>=(prev_node[1]+y_vector)/15: 
+            self.y = self.y + self.v*time_delta*sin(self.theta)
+        else:
+            self.y = next_node[1]/15
+        #self.x=self.x/pixels_per_meter
+        #self.y=self.y/pixels_per_meter
+        self.theta = self.theta
 
-        x = node[0] / pixels_per_meter
-        y = node[1] / pixels_per_meter
-        theta = node[2]
+        #x = node[0] / pixels_per_meter
+        #y = node[1] / pixels_per_meter
+        #theta = prev_node[2]
 
-        self.x = x + (self.v*time_delta)*cos(self.theta)
-        self.y = y + (self.v*time_delta)*sin(self.theta)
-        self.theta = theta
+        #self.x = self.x + (self.v*time_delta)*cos(self.theta)
+        #self.y = self.y + (self.v*time_delta)*sin(self.theta)
+        #self.theta = theta
 
 
 CarPaths = [
