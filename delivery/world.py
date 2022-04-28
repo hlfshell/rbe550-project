@@ -1,6 +1,6 @@
 from math import cos, pi, sin
 from random import choice
-import time
+from time import time
 from typing import List
 import pygame
 from delivery.car import Car, CarPaths
@@ -209,6 +209,15 @@ class World:
                     print(len(planner.queue))
                     print("Could not solve local planner path")
                     raise e
+
+            # Now that we have the path, let's physically
+            # move the robot over
+            while self.vehicle.state != self.vehicle.path[-1]:
+                self.tick()
+                self.render()
+                pygame.event.get()
+                pygame.display.update()
+                self._frame_per_sec.tick(self._fps)
 
     def drive(self):
         while True:

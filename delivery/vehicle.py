@@ -1,5 +1,5 @@
 from __future__ import annotations
-from math import degrees, pi
+from math import degrees, floor, pi
 
 from typing import List
 import pygame
@@ -26,6 +26,8 @@ class Vehicle(pygame.sprite.Sprite):
         self.path: List[State] = None
         self.path_time_delta: float = 0.0
 
+        self.time = 0.0
+
         self.render()
         
     def render(self):
@@ -43,5 +45,43 @@ class Vehicle(pygame.sprite.Sprite):
         state = self.state.clone()
         return Vehicle(state)
     
-    def tick(self, time_delta: float):
-        pass
+    def set_path(self, path: List[State]):
+        self.path = path
+    
+    def tick(self, time_delta: float, path_time_delta=2.0):
+        if self.path is None or len(self.path) == 0:
+            return
+
+        self.time += time_delta
+
+        index = floor(self.time / self.path_time_delta)
+
+        # If we've reached the end, hold it
+        if self.time >= path_time_delta * len(self.path) or \
+            index >= len(self.path):
+            self.state = self.path[-1]
+            return
+        
+        state = self.path[index]
+
+        xdelta = state.xdot * time_delta
+        ydelta = state.ydot * time_delta
+        thetadelta = state.thetadot * time_delta
+
+        if thetadelta > pi:
+            thetadelta = -1*((2*pi) - thetadelta)
+        elif thetadelta < -pi:
+            thetadelta = (2*pi) + thetadelta
+        
+        x = state.x + xdelta
+        y = state.y + ydelta
+        theta = state.theta + thetadelta
+
+        self.state = State(
+            x,
+            y,
+            theta,
+            xdot = state.xdot,
+            ydot = state.xdot,
+            thetadot = state.thetadot
+        )
