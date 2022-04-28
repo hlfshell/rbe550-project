@@ -1,6 +1,6 @@
 from math import cos, pi, sin
 from random import choice
-from time import time
+import time
 from typing import List
 import pygame
 from delivery.car import Car, CarPaths
