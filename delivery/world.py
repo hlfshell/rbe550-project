@@ -74,6 +74,8 @@ class World:
         for car in self.cars:
             car.tick(time_delta)
 
+        self.vehicle.tick(time_delta)
+
     def draw_global_path(self):
         if self.global_path is None:
             return
