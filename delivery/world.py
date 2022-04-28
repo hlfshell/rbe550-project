@@ -1,8 +1,12 @@
 from math import cos, pi, sin
+from multiprocessing import RLock
 from random import choice
+from threading import Thread
 from time import time
-from typing import List
+from typing import List, Tuple
+from uuid import uuid4
 import pygame
+from queue import Queue
 from delivery.car import Car, CarPaths
 from delivery.global_planner import GlobalPlanner
 from delivery.local_planner import LocalPlanner
@@ -33,8 +37,14 @@ class World:
         self.vehicle: Vehicle = None
         self.map = Map.Get_Map()
 
+        self.goal: int = None
         self.global_path: List[Node] = None
         self.local_path: List[State] = None
+        self.future_local_paths: List[State] = []
+
+        self.path_lock = RLock()
+        self.path_id: str = None
+        self.planning: bool = False
 
         self._display_surface = pygame.display.set_mode(WINDOW_SIZE)
         pygame.display.set_caption("RBE550 Delivery Robot Project")
@@ -130,14 +140,10 @@ class World:
         return False
 
     def global_plan(self):
-        goal = None
-        while goal == None:
-            node: Node = choice(list(self.map.nodes.values()))
-            if node.type == "delivery":
-                goal = node
-                print("GOAL NODE", node)
+        if self.goal is None:
+            return
 
-        # goal = self.map.nodes[14]
+        goal = self.map.nodes[self.goal]
         
         planner = GlobalPlanner(self.map, self.map.start, goal)
         self.global_path = planner.search()
@@ -161,7 +167,102 @@ class World:
                 time_start = time()
             self.render()
             pygame.event.get()
-    
+
+    def plan(self):
+        if self.goal is None:
+            return
+
+        if self.global_path is None:
+            # Generate a global path
+            self.global_plan()
+
+        with self.path_lock:
+            id = self.path_id
+        
+        if id is not None:
+            return
+        
+        with self.path_lock:
+            # Check to see if we are actively planning
+            if self.planning:
+                return
+
+            # If we don't have a global path, we can't continue
+            if self.global_path is None or len(self.global_path) <= 0:
+                return
+
+            # Determine if we've already calculated the full path
+            if len(self.future_local_paths) == len(self.global_path):
+                return
+            
+            # OK, we need more local paths, and we are not actively
+            # running a path planner right now
+            # We are targeting the next node in the global path we have
+            # not yet planned a path to. We know this by comparing
+            # plan list lengths
+            index = len(self.future_local_paths)
+            goal = self.global_path[index]
+            # The last state of the last local path is our start state
+            # for this path
+            if len(self.future_local_paths) <= 0:
+                current_vehicle_state = self.vehicle.state
+            else:
+                print(self.future_local_paths, self.future_local_paths[-1])
+                current_vehicle_state = self.future_local_paths[-1][-1]
+            planner = LocalPlanner(
+                current_vehicle_state,
+                (goal.x, goal.y),
+                2.0,
+                self.collision_detection,
+                self._display_surface
+            )
+            # Finally, fire off the thread
+            self.planning = True
+            Thread(target=self._plan, args=[self.path_id, planner]).start()
+ 
+    def _plan(self, path_id: str, planner: LocalPlanner):
+        print("entered async")
+        try:
+            print("starting search")
+            path = planner.search()
+            print("search complete", path)
+
+            if len(path) < 1:
+                return
+            
+            with self.path_lock:
+                # If the plan id has changed, we no longer need this path
+                if self.path_id != path_id:
+                    return
+
+                # If the plan id matches, append this to the local paths,
+                # minus the starting path since we're already there.
+                if len(self.future_local_paths) > 0:
+                    path = path[1:]
+                self.future_local_paths.append(path)
+        except Exception as e:
+            print("Could not solve local planner path")
+            raise e
+        finally:
+            with self.path_lock:
+                self.planning = False
+
+    def test_local_async_planner(self):
+        while True:
+            if self.goal == None:
+                chosen_goal = choice(
+                    [node for node in self.map.nodes.values() if node.type == "delivery"]
+                )
+                self.goal = chosen_goal.id
+        
+            self.render()
+            self.tick()
+            self.plan()
+            pygame.event.get()
+            pygame.display.update()
+            self._frame_per_sec.tick(self._fps)
+
+
     def test_local_planner(self):
         time_start: float = time()
         while True:
@@ -187,28 +288,44 @@ class World:
             while True:
                 print("state", current_vehicle_state)
                 print("goal", (current_node.x, current_node.y))
-                planner = LocalPlanner(
-                    current_vehicle_state,
-                    (current_node.x, current_node.y),
-                    planner_time_delta,
-                    self.collision_detection,
-                    self._display_surface
-                )
-                try:
-                    path = planner.search()
-                    if len(global_path) <= 0:
-                        break
-                    current_node = global_path.pop(0)
-                    if len(path) < 1:
-                        continue
+                with self.path_lock:
+                    with self.lock:
+                        if self.local_path is not None:
+                            continue
+                        if self.path_id is None:
+                            self.path_id = str(uuid4())
 
-                    self.vehicle.path += path[1:]
-                    current_vehicle_state = path[-1]
-                except Exception as e:
-                    print(planner.steps_taken)
-                    print(len(planner.queue))
-                    print("Could not solve local planner path")
-                    raise e
+                        planner = LocalPlanner(
+                            current_vehicle_state,
+                            (current_node.x, current_node.y),
+                            planner_time_delta,
+                            self.collision_detection,
+                            self._display_surface
+                        )
+
+                        Thread(target=self.plan, args=[self.path_id, planner])
+                    planner = LocalPlanner(
+                        current_vehicle_state,
+                        (current_node.x, current_node.y),
+                        planner_time_delta,
+                        self.collision_detection,
+                        self._display_surface
+                    )
+                    try:
+                        path = planner.search()
+                        if len(global_path) <= 0:
+                            break
+                        current_node = global_path.pop(0)
+                        if len(path) < 1:
+                            continue
+
+                        self.future_local_paths.append(path)
+                        current_vehicle_state = path[-1]
+                    except Exception as e:
+                        print(planner.steps_taken)
+                        print(len(planner.queue))
+                        print("Could not solve local planner path")
+                        raise e
 
             # Now that we have the path, let's physically
             # move the robot over
