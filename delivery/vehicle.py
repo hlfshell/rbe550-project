@@ -23,8 +23,8 @@ class Vehicle(pygame.sprite.Sprite):
         self.rect = pygame.Rect = None
         self.mask: pygame.mask.Mask = None
 
+        self.global_path_step = 0
         self.path: List[State] = None
-        self.path_time_delta: float = 0.0
 
         self.time = 0.0
 
@@ -47,19 +47,27 @@ class Vehicle(pygame.sprite.Sprite):
     
     def set_path(self, path: List[State]):
         self.path = path
-    
+
+    def reset_goal(self, goal: int):
+        self.path = None
+        self.global_path_step = 0
+        self.time = 0
+
     def tick(self, time_delta: float, path_time_delta=2.0):
         if self.path is None or len(self.path) == 0:
             return
 
         self.time += time_delta
 
-        index = floor(self.time / self.path_time_delta)
+        index = floor(self.time / path_time_delta)
 
         # If we've reached the end, hold it
         if self.time >= path_time_delta * len(self.path) or \
             index >= len(self.path):
             self.state = self.path[-1]
+            self.path = None
+            self.global_path_step += 1
+            self.time = 0
             return
         
         state = self.path[index]

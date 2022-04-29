@@ -90,6 +90,12 @@ class World:
         # 1. If the vehicle is at the end of a path, clear it
         # 2. Set the next path
         # 3. Identify that we have moved through all of the paths
+        with self.path_lock:
+            # Determine where the car is on its path.
+            index = self.vehicle.global_path_step
+            if len(self.future_local_paths) > index + 1 and \
+                self.vehicle.path is None:
+                    self.vehicle.path = self.future_local_paths[index] #[1:]
         self.vehicle.tick(time_delta)
 
     def draw_global_path(self):
@@ -279,7 +285,6 @@ class World:
             pygame.event.get()
             pygame.display.update()
             self._frame_per_sec.tick(self._fps)
-
 
     def test_local_planner(self):
         time_start: float = time()
