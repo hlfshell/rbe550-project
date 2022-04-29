@@ -43,8 +43,6 @@ class LocalPlanner():
 
         while path == None:
             path = self.step()
-            pygame.event.get()
-            pygame.display.update()
         
         return path
     
@@ -121,4 +119,4 @@ class LocalPlanner():
                 self.queue.push(neighbor, total_cost)
         
                 # Draw a dot for the current considered spot
-                self.surface.fill((0, 0, 255), (neighbor.pixel_xy, (4, 4)))
+                # self.surface.fill((246, 74, 236), (neighbor.pixel_xy, (6, 6)))

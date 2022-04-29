@@ -40,7 +40,7 @@ class World:
         self.goal: int = None
         self.global_path: List[Node] = None
         self.local_path: List[State] = None
-        self.future_local_paths: List[State] = []
+        self.future_local_paths: List[List[State]] = []
 
         self.path_lock = RLock()
         self.path_id: str = None
@@ -67,9 +67,11 @@ class World:
         self._display_surface.blit(self.bg_sprite, self.bg_sprite.get_rect())
 
         self.map.render(self._display_surface)
+        self.draw_global_path()
+        self.draw_local_paths()
+
         for obstacle in self.obstacles:
             obstacle.render(self._display_surface)
-        self.draw_global_path()
 
         if self.vehicle is not None:
             self.vehicle.render()
@@ -84,6 +86,10 @@ class World:
         for car in self.cars:
             car.tick(time_delta)
 
+        # TODO - 
+        # 1. If the vehicle is at the end of a path, clear it
+        # 2. Set the next path
+        # 3. Identify that we have moved through all of the paths
         self.vehicle.tick(time_delta)
 
     def draw_global_path(self):
@@ -109,8 +115,22 @@ class World:
             if len(drawn) == 0:
                 break
             second = drawn.pop(0)
+    
+    def draw_local_paths(self):
+        with self.path_lock:
+            paths = self.future_local_paths.copy()
 
-        pygame.display.update()
+        if len(paths) < 1:
+            return
+        
+        # with self.path_lock:
+        for path in paths:
+            for state in path:
+                self._display_surface.fill(
+                    (0, 0, 255),
+                    (state.pixel_xy,
+                    (6,6))
+                )
 
     def set_vehicle(self, vehicle: Vehicle):
         self.vehicle = vehicle
@@ -207,7 +227,6 @@ class World:
             if len(self.future_local_paths) <= 0:
                 current_vehicle_state = self.vehicle.state
             else:
-                print(self.future_local_paths, self.future_local_paths[-1])
                 current_vehicle_state = self.future_local_paths[-1][-1]
             planner = LocalPlanner(
                 current_vehicle_state,
@@ -225,7 +244,6 @@ class World:
         try:
             print("starting search")
             path = planner.search()
-            print("search complete", path)
 
             if len(path) < 1:
                 return
