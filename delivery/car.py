@@ -12,8 +12,8 @@ class Car():
         path: List[Tuple[float, float, float]]
     ):
         self.path = path.copy()
-        if randint(0, 1):
-            path.reverse()
+        #if randint(0, 1):
+        #    path.reverse()
 
         pixels_per_meter = 15
         self.x = self.path[0][0] / pixels_per_meter
@@ -23,34 +23,34 @@ class Car():
         v_max = 12 
         v_min = 6
         self.v = ((v_max-v_min)*random()) + v_min
-
+   
         self.time = 0.0
-
+        self.leg=1
         self.path_finished = False
 
-        self.path_times: List[float] = [0.0]
-        first = path.pop(0)
-        second = path.pop(0)
-        while True:
-            first_xy = (
-                first[0] / pixels_per_meter,
-                first[1] / pixels_per_meter
-            )
-            second_xy = (
-                second[0] / pixels_per_meter,
-                second[1] / pixels_per_meter
-            )
-            distance_between = sqrt(
-                (first_xy[0] - second_xy[0])**2 +
-                (first_xy[1] - second_xy[1])**2
-            )
-            time_to_travel = distance_between / self.v
-            time_at = time_to_travel + self.path_times[-1]
-            self.path_times.append(time_at)
-            first = second
-            if len(path) == 0:
-                break
-            second = path.pop(0)
+        #self.path_times: List[float] = [0.0]
+        #first = path.pop(0)
+        #second = path.pop(0)
+        #while True:
+            # first_xy = (
+            #     first[0] / pixels_per_meter,
+            #     first[1] / pixels_per_meter
+            # )
+            # second_xy = (
+            #     second[0] / pixels_per_meter,
+            #     second[1] / pixels_per_meter
+            # )
+            # distance_between = sqrt(
+            #     (first_xy[0] - second_xy[0])**2 +
+            #     (first_xy[1] - second_xy[1])**2
+            # )
+            # time_to_travel = distance_between / self.v
+            # time_at = time_to_travel + self.path_times[-1]
+            # self.path_times.append(time_at)
+            # first = second
+            # if len(path) == 0:
+            #     break
+            # second = path.pop(0)
 
         type = choice(["a", "b", "c"])
         self.image = pygame.image.load(
@@ -66,7 +66,7 @@ class Car():
         )
 
     def render(self):
-        angle = degrees(self.theta)
+        angle = degrees(self.theta-pi/2)
         self.sprite = pygame.transform.rotate(
             self.image,
             angle
@@ -79,104 +79,70 @@ class Car():
         surface.blit(self.sprite, self.rect)
     
     def tick(self, time_delta: float):
-        # First we find what node we should be starting
-        # from.
         self.time += time_delta
-
-        #index = 0
-        current_index=0
-
-        #this tells us where the time is in the list of path times
-        for i in range(len(self.path_times)-1):
-            if self.time>= self.path_times[i] and self.time<self.path_times[i+1]:
-                current_index=i
-                next_index=i+1
-                break
-    
-        # for current_index, t in enumerate(self.path_times):
-        #     print(">>", time_delta, self.time, t)
-        #     if self.time < t:
-        #         index = current_index
-        #         break
-        
-        # If we are at the end, this car is finished
-        if current_index == len(self.path_times) - 1:
-            print("done")
-            self.path_finished = True
-            return
-        
-        # We actually want the prior index
-        #index = index - 1
-        #print("CHOSEN INDEX", index)
-
-        prev_node = self.path[current_index]
-        next_node=self.path[next_index]
-
-        x_vector=next_node[0]-prev_node[0]
-        y_vector=next_node[1]-prev_node[1]
-        theta_vector=next_node[2]-prev_node[2]
-
         pixels_per_meter = 15
-        if self.x + self.v*time_delta*cos(self.theta)>=(prev_node[0]+x_vector)/15:  #im not quite to the next waypoint
-            self.x = self.x + self.v*time_delta*cos(self.theta)                #my new point is a step inthe direction
-        else:
-            self.x = next_node[0]/15                                              #my new point is the waypoint
-        if self.y + self.v*time_delta*sin(self.theta)>=(prev_node[1]+y_vector)/15: 
-            self.y = self.y + self.v*time_delta*sin(self.theta)
-        else:
-            self.y = next_node[1]/15
-        #self.x=self.x/pixels_per_meter
-        #self.y=self.y/pixels_per_meter
-        self.theta = self.theta
+        prev_node = self.path[self.leg-1]
+        next_node=self.path[self.leg]
 
-        #x = node[0] / pixels_per_meter
-        #y = node[1] / pixels_per_meter
-        #theta = prev_node[2]
+        x_vector=(next_node[0]-prev_node[0])/pixels_per_meter
+        y_vector=(next_node[1]-prev_node[1])/pixels_per_meter    
+        theta_vector=next_node[2]-prev_node[2]
+        dx=sqrt(x_vector**2+y_vector**2)
 
-        #self.x = self.x + (self.v*time_delta)*cos(self.theta)
-        #self.y = self.y + (self.v*time_delta)*sin(self.theta)
-        #self.theta = theta
+        num_ticks=round(dx/time_delta,0)
+        
+        self.theta=self.theta+theta_vector/num_ticks
+        self.x = self.x + x_vector/num_ticks
+        self.y = self.y + y_vector/num_ticks
 
+        dx_to_next_leg=sqrt((next_node[0]/pixels_per_meter-self.x)**2+(next_node[1]/pixels_per_meter-self.y)**2)
+        if dx_to_next_leg<=self.v*time_delta:
+            self.x=next_node[0]/pixels_per_meter
+            self.y=next_node[1]/pixels_per_meter
+            if self.leg<len(self.path)-1:
+                self.leg+=1
+            else:
+                self.path_finished=True
 
 CarPaths = [
-    [(1700, 485,-pi),
-        (1360,485,-pi),
-        (1300,430,0),
-        (1300,150,0),
-        (1200,100,-pi),
-        (880,100,-pi),
-        (850,60,0),
-        (850,-100,0)],
-    [(845,900,0),
-        (845,530,0),
-        (790,480,-pi/2),
-        (650,480,-pi/2),
-        (620,440,0),
-        (620,210,0),
-        (670,160,pi/2),
-        (1200,160,pi/2),
-        (1240,210,pi),
-        (1240,500,pi),
-        (1300,540,pi/2),
-        (1430,540,pi/2),
-        (1475,585,pi),
-        (1475,900,pi)],
-    [(-100,160,pi/2),
-        (130,160,pi/2),
-        (180,200,pi),
-        (180,510,pi),
-        (230,540,pi/2),
-        (360,540,pi/2),
-        (410,590,pi),
-        (410,900,pi)],
-    [(790,-100,-pi),
-        (790,60,-pi),
-        (750,100,-pi/2),
-        (610,100,-pi/2),
-        (560,150,-pi),
-        (560,440,-pi),
-        (520,490,-pi/2),
-        (275,490,-pi/2),
-        (235,440,-pi),
-        (235,-100,-pi)]
+    [(1650, 490,pi),
+        (1330,490,pi),
+        (1295,450,pi/2),
+        (1295,160,pi/2),
+        (1200,100,pi),
+        (850,100,pi),
+        (830,60,pi/2),
+        (830,-50,pi/2)],
+    [(845,850,pi/2),
+        (845,530,pi/2),
+        (790,485,pi),
+        (650,485,pi),
+        (620,440,pi/2),
+        (620,180,pi/2),
+        (670,160,0),
+        (1200,160,0),
+        (1244,180,-pi/2),
+        (1244,500,-pi/2),
+        (1300,540,0),
+        (1440,540,0),
+        (1475,585,-pi/2),
+        (1475,850,-pi/2)],
+    [(-50,160,0),
+        (140,160,0),
+        (180,200,-pi/2),
+        (180,510,-pi/2),
+        (230,540,0),
+        (370,540,0),
+        (410,590,-pi/2),
+        (410,850,-pi/2)] ,
+    [(790,-50,-pi/2),
+        (790,75,-pi/2),
+        (750,110,-pi),
+        (610,110,-pi),
+        (560,150,-pi/2),
+        (560,440,-pi/2),
+        (520,490,-pi),
+        (270,490,-pi),
+        (235,440,-3*pi/2),
+        (235,-50,-3*pi/2)]
 ]

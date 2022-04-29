@@ -72,7 +72,11 @@ class World:
     def tick(self):
         time_delta = 1/self._fps
         for car in self.cars:
-            car.tick(time_delta)
+            if car.path_finished==True:
+                self.cars.remove(car)
+                #if this was a sprite we should .kill?
+            else:
+                car.tick(time_delta)
 
         self.vehicle.tick(time_delta)
 
