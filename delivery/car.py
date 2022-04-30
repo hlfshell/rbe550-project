@@ -28,30 +28,7 @@ class Car():
         self.leg=1
         self.path_finished = False
 
-        #self.path_times: List[float] = [0.0]
-        #first = path.pop(0)
-        #second = path.pop(0)
-        #while True:
-            # first_xy = (
-            #     first[0] / pixels_per_meter,
-            #     first[1] / pixels_per_meter
-            # )
-            # second_xy = (
-            #     second[0] / pixels_per_meter,
-            #     second[1] / pixels_per_meter
-            # )
-            # distance_between = sqrt(
-            #     (first_xy[0] - second_xy[0])**2 +
-            #     (first_xy[1] - second_xy[1])**2
-            # )
-            # time_to_travel = distance_between / self.v
-            # time_at = time_to_travel + self.path_times[-1]
-            # self.path_times.append(time_at)
-            # first = second
-            # if len(path) == 0:
-            #     break
-            # second = path.pop(0)
-
+      
         type = choice(["a", "b", "c"])
         self.image = pygame.image.load(
             f"./delivery/img/car_{type}.png"
@@ -89,60 +66,72 @@ class Car():
         theta_vector=next_node[2]-prev_node[2]
         dx=sqrt(x_vector**2+y_vector**2)
 
-        num_ticks=round(dx/time_delta,0)
+        turn_radius=min(abs(next_node[0]-prev_node[0]),abs(next_node[1]-prev_node[1]))/pixels_per_meter  #in meters
+        turn_radius=40/15
+        turn_circle=pi*2*turn_radius #pi d in meters
+
+        #num_ticks=round(dx/time_delta,0)
+
+        if theta_vector!=0:
+            theta_dot=theta_vector/(turn_circle/4/self.v)  #radius/sec with direction
+        else:
+            theta_dot=0
         
-        self.theta=self.theta+theta_vector/num_ticks
-        self.x = self.x + x_vector/num_ticks
-        self.y = self.y + y_vector/num_ticks
+        self.theta=self.theta+theta_dot*time_delta
+        self.x=self.x+cos(self.theta)*self.v*time_delta
+        self.y=self.y-sin(self.theta)*self.v*time_delta
+        #self.x = self.x + x_vector/self.v*time_delta
+        #self.y = self.y + y_vector/self.v*time_delta
 
         dx_to_next_leg=sqrt((next_node[0]/pixels_per_meter-self.x)**2+(next_node[1]/pixels_per_meter-self.y)**2)
-        if dx_to_next_leg<=self.v*time_delta:
+        if dx_to_next_leg<=2*self.v*time_delta:
             self.x=next_node[0]/pixels_per_meter
             self.y=next_node[1]/pixels_per_meter
+            self.theta=next_node[2]
             if self.leg<len(self.path)-1:
                 self.leg+=1
             else:
                 self.path_finished=True
 
 CarPaths = [
-    [(1650, 490,pi),
-        (1330,490,pi),
-        (1295,450,pi/2),
-        (1295,160,pi/2),
-        (1200,100,pi),
-        (850,100,pi),
-        (830,60,pi/2),
-        (830,-50,pi/2)],
-    [(845,850,pi/2),
-        (845,530,pi/2),
-        (790,485,pi),
-        (650,485,pi),
+    [(1650, 490,pi), #tstarting at 4 oclock coming left
+        (1335,490,pi),  #right turn to
+        (1295,455,pi/2),
+        (1295,140,pi/2),  #left turn to
+        (1255,100,pi),
+        (880,100,pi),  #right turn to
+        (840,60,pi/2),  
+        (840,-50,pi/2)],
+    [(850,850,pi/2),
+        (850,525,pi/2),
+        (810,485,pi),
+        (660,485,pi),
         (620,440,pi/2),
-        (620,180,pi/2),
-        (670,160,0),
+        (620,200,pi/2),
+        (660,160,0),
         (1200,160,0),
-        (1244,180,-pi/2),
-        (1244,500,-pi/2),
-        (1300,540,0),
-        (1440,540,0),
-        (1475,585,-pi/2),
+        (1240,200,-pi/2),
+        (1240,500,-pi/2),
+        (1280,540,0),
+        (1435,540,0),
+        (1475,580,-pi/2),
         (1475,850,-pi/2)],
     [(-50,160,0),
         (140,160,0),
         (180,200,-pi/2),
-        (180,510,-pi/2),
-        (230,540,0),
+        (180,500,-pi/2),
+        (220,540,0),
         (370,540,0),
-        (410,590,-pi/2),
+        (410,580,-pi/2),
         (410,850,-pi/2)] ,
     [(790,-50,-pi/2),
-        (790,75,-pi/2),
+        (790,70,-pi/2),
         (750,110,-pi),
-        (610,110,-pi),
+        (600,110,-pi),
         (560,150,-pi/2),
-        (560,440,-pi/2),
+        (560,450,-pi/2),
         (520,490,-pi),
-        (270,490,-pi),
-        (235,440,-3*pi/2),
+        (275,490,-pi),
+        (235,450,-3*pi/2),
         (235,-50,-3*pi/2)]
 ]
