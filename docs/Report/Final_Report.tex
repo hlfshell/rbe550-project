@@ -67,14 +67,19 @@ Our goal is to create planning and execution algorithms to permit autonomous nav
      \label{fig:routemap}
      \caption{Global Route Map}
 \end{figure}
-\noindent \textbf{Planners} We selected a simple A* algorithm for global path selection.  With a given route map, no complexity is involved.  Each path segment returned represents a leg of the global route between waypoints.  Each leg is then, in turn, passed to the local planner which uses a slightly more complex A* to account for collision detection and reject off-limits positions.
+\noindent \textbf{Global Planner} We selected a simple A* algorithm for global path selection.  With a given route map, no complexity is involved.  Each path segment returned represents a leg of the global route between waypoints.  \\
+
+\noindent \textbf{Local Planner} Each leg of the global path is then, in turn, passed to the local planner which uses a slightly more complex A* to account for collision detection and reject off-limits positions.  
 \begin{figure}[H]
    \centering
     \includegraphics[width = 1\columnwidth]{figures/astar.png}
      \label{fig:astar}
      \caption{A* Local Planner}
 \end{figure}
-\noindent \textbf{Simulation}. For simulating the environment we chose to use Pygame to capitalize on the collision detecting built into the sprite class.  A mask of the off-limits areas creates curb and building limits for our robot's movement.
+
+\noindent \textbf{Asynchronous Planner}
+
+\noindent \textbf{Simulation}. For simulating the environment we chose to use Pygame to capitalize on the collision detecting built into the sprite class.  A mask of the off-limits areas creates the curb and building limits for our robot's movement. We use the the alpha layer of the sprites for pixel-by-pixel comparisons- useful for tight transitions between obstacles..\
 \begin{figure}[H]
    \centering
     \includegraphics[width = 1\columnwidth]{figures/mask.png}
