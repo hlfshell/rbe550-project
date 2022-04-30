@@ -93,8 +93,9 @@ class World:
 
         for car in self.cars:
             if car.path_finished==True:
+                path = car.path
                 self.cars.remove(car)
-                #if this was a sprite we should .kill?
+                self.cars.append(Car(path))
             else:
                 car.tick(time_delta)
 
@@ -208,6 +209,7 @@ class World:
             self.render()
             pygame.event.get()
             pygame.display.update()
+            print(pygame.mouse.get_pos())
             self._frame_per_sec.tick(self._fps)
 
     def test_global_planner(self):
