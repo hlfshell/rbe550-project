@@ -32,6 +32,8 @@ class Node():
     @property
     def color(self) -> Tuple[int, int, int]:
         color = (0, 0, 0)
+        if self.id == 6:
+            color = (255, 0, 0)
         if self.type == "start":
             color = (0, 255, 0)
         elif self.type == "delivery":
