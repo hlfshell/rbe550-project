@@ -2,8 +2,8 @@ from math import cos, pi, sin
 from multiprocessing import RLock
 from random import choice
 from threading import Thread
-from time import time
-from typing import List, Tuple
+from time import perf_counter, time
+from typing import List
 from uuid import uuid4
 import pygame
 from queue import Queue
@@ -33,6 +33,8 @@ class World:
         self._display_surface: pygame.Surface = None
         self._obstacle_map: pygame.Surface = None
         self._map: pygame.Surface = None
+
+        self.last_tick: float = 0.0
 
         self.vehicle: Vehicle = None
         self.map = Map.Get_Map()
@@ -82,7 +84,11 @@ class World:
             car.blit(self._display_surface)
 
     def tick(self):
-        time_delta = 1/self._fps
+        if self.last_tick == 0.0:
+            time_delta = 1/self._fps
+        else:
+            time_delta = perf_counter() - self.last_tick
+
         for car in self.cars:
             car.tick(time_delta)
 

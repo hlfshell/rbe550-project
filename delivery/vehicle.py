@@ -57,6 +57,7 @@ class Vehicle(pygame.sprite.Sprite):
         if self.path is None or len(self.path) == 0:
             return
 
+        time_delta = 1.0
         self.time += time_delta
 
         index = floor(self.time / path_time_delta)
