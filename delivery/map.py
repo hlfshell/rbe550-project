@@ -71,6 +71,19 @@ class Map():
             neighbors.append(neighbor)
         return neighbors
 
+    def nearest_node(self, x: float, y: float) -> int:
+        nearest_node = 0
+        closest_distance = 9999
+        for node in self.nodes.values():
+            distance = sqrt(
+                (x - node.x)**2 +
+                (y - node.y)**2
+            )
+            if distance < closest_distance:
+                nearest_node = node.id
+                closest_distance = distance
+        return nearest_node
+
     @property
     def start(self) -> Node:
         return self.nodes[0]

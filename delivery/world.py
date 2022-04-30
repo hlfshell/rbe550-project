@@ -84,6 +84,8 @@ class World:
             car.blit(self._display_surface)
 
     def tick(self):
+        # Normally a time tick should be every 1/60 (1/fps), but if it's
+        # slower this makes the appropriate adjustment
         if self.last_tick == 0.0:
             time_delta = 1/self._fps
         else:
@@ -92,16 +94,13 @@ class World:
         for car in self.cars:
             car.tick(time_delta)
 
-        # TODO - 
-        # 1. If the vehicle is at the end of a path, clear it
-        # 2. Set the next path
-        # 3. Identify that we have moved through all of the paths
         with self.path_lock:
             # Determine where the car is on its path.
             index = self.vehicle.global_path_step
-            if len(self.future_local_paths) > index + 1 and \
+            if len(self.future_local_paths) >= index + 1 and \
                 self.vehicle.path is None:
                     self.vehicle.path = self.future_local_paths[index] #[1:]
+
         self.vehicle.tick(time_delta)
 
     def draw_global_path(self):
@@ -171,13 +170,29 @@ class World:
 
         return False
 
+    def choose_goal(self):
+        # Determine if we are near the grocery store or the delivery
+        # target
+        nearest_node = self.map.nearest_node(self.vehicle.state.x, self.vehicle.state.y)
+
+        if nearest_node == 0:
+            if self.goal == None:
+                chosen_goal = choice(
+                    [node for node in self.map.nodes.values() if node.type == "delivery"]
+                )
+                self.goal = chosen_goal.id
+        else:
+            self.goal = 0
+
     def global_plan(self):
         if self.goal is None:
             return
 
         goal = self.map.nodes[self.goal]
         
-        planner = GlobalPlanner(self.map, self.map.start, goal)
+        nearest_id = self.map.nearest_node(self.vehicle.state.x, self.vehicle.state.y)
+        nearest_node = self.map.nodes[nearest_id]
+        planner = GlobalPlanner(self.map, nearest_node, goal)
         self.global_path = planner.search()
 
     def test_cars(self):
@@ -201,8 +216,18 @@ class World:
             pygame.event.get()
 
     def plan(self):
+        # Determine first if we are at the end of our path. If so,
+        # reset the path so that we can assign a new one.
+        if self.global_path is not None and \
+            self.vehicle.global_path_step == len(self.global_path):
+            with self.path_lock:
+                self.goal = None
+                self.global_path = None
+                self.future_local_paths = []
+                self.vehicle.reset_goal()
+
         if self.goal is None:
-            return
+            self.choose_goal()
 
         if self.global_path is None:
             # Generate a global path
@@ -252,9 +277,7 @@ class World:
             Thread(target=self._plan, args=[self.path_id, planner]).start()
  
     def _plan(self, path_id: str, planner: LocalPlanner):
-        print("entered async")
         try:
-            print("starting search")
             path = planner.search()
 
             if len(path) < 1:
@@ -279,12 +302,6 @@ class World:
 
     def test_local_async_planner(self):
         while True:
-            if self.goal == None:
-                chosen_goal = choice(
-                    [node for node in self.map.nodes.values() if node.type == "delivery"]
-                )
-                self.goal = chosen_goal.id
-        
             self.render()
             self.tick()
             self.plan()

@@ -48,7 +48,7 @@ class Vehicle(pygame.sprite.Sprite):
     def set_path(self, path: List[State]):
         self.path = path
 
-    def reset_goal(self, goal: int):
+    def reset_goal(self):
         self.path = None
         self.global_path_step = 0
         self.time = 0
