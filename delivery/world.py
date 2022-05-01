@@ -338,7 +338,7 @@ class World:
             with self.path_lock:
                 self.planning = False
 
-    def test_local_async_planner(self):
+    def run(self):
         while True:
             self.render()
             self.tick()
