@@ -29,7 +29,7 @@ class Obstacle(pygame.sprite.Sprite):
     @staticmethod
     def Load_Obstacles() -> List[Obstacle]:
         return [
-            Obstacle('dumpster', (740,307), 0),
+            Obstacle('dumpster', (740,312), 0),
             Obstacle('dumpster', (335,600), 0),
             Obstacle('dumpster', (715,600), 0),
             Obstacle('trashcan', (1360,437), 0),
@@ -47,7 +47,7 @@ class Obstacle(pygame.sprite.Sprite):
             Obstacle('bike', (1440,720), 0),
             Obstacle('bike', (890,445), 0),
             Obstacle('cone', (870,750), 0),
-            Obstacle('cone', (765,730), 0),
+            Obstacle('cone', (770,725), 0),
             Obstacle('cone', (1215,215), 0),
             Obstacle('cone', (1270,225), 0),
             Obstacle('cone', (1327,255), 0),
