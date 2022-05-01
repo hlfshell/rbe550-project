@@ -1,4 +1,5 @@
 from __future__ import annotations
+from collections import defaultdict
 from math import sqrt
 from typing import Dict, List, Tuple
 
@@ -32,8 +33,6 @@ class Node():
     @property
     def color(self) -> Tuple[int, int, int]:
         color = (0, 0, 0)
-        if self.id == 6:
-            color = (255, 0, 0)
         if self.type == "start":
             color = (0, 255, 0)
         elif self.type == "delivery":
@@ -60,6 +59,32 @@ class Map():
 
     def __init__(self):
         self.nodes: Dict[int, Node] = {}
+        self.locks: defaultdict(lambda: []) = {}
+
+    def toggle_robot_lock(self, node: int) -> bool:
+        if len(self.locks[node]) == 0:
+            self.locks[node] = ["robot"]
+            return False
+        elif len(self.locks[node]) > 1:
+            return True
+        elif self.locks[node] == "robot":
+            self.locks[node] = []
+            return False
+        else:
+            return True
+
+    def toggle_car_lock(self, car_id: str, node: int) -> bool:
+        if len(self.locks[node]) == 0:
+            self.locks[node] = [car_id]
+            return False
+        elif self.locks[node][0] == "robot":
+            return True
+        elif car_id in self.locks[node]:
+            self.locks[node].remove(car_id)
+            return False
+        else:
+            self.locks[node].append(car_id)
+            return False
 
     def add_node(self, node: Node):
         if node.id in self.nodes:
