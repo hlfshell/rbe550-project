@@ -113,7 +113,7 @@ class World:
             # Determine where the car is on its path.
             index = self.vehicle.global_path_step
             if len(self.future_local_paths) >= index + 1 and \
-                self.vehicle.path is None:
+                (self.vehicle.path is None or self.robot_locked):
                     self.vehicle.path = self.future_local_paths[index]
                     # Toggle the lock if possible
                     current_node = self.global_path[index-1]
@@ -128,7 +128,7 @@ class World:
                                     (current_node.id, next_node.id)
                                 )
                                 if lock is True:
-                                    self.robot_lockd = True
+                                    self.robot_locked = True
                                 else:
                                     self.robot_locked = False
                                     self.robot_unlock_at_node = next_node.id
