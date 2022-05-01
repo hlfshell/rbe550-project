@@ -13,7 +13,7 @@ from delivery.local_planner import LocalPlanner
 from delivery.map import Map, Node
 from delivery.obstacle import Obstacle
 from delivery.state import State
-from delivery.vehicle import Vehicle
+from delivery.robot import Robot
 
 
 BG_SPRITE = "./delivery/img/map.png"
@@ -35,7 +35,7 @@ class World:
 
         self.last_tick: float = 0.0
 
-        self.vehicle: Vehicle = None
+        self.vehicle: Robot = None
         self.map = Map.Get_Map()
 
         self.goal: int = None
@@ -182,10 +182,10 @@ class World:
                     (6,6))
                 )
 
-    def set_vehicle(self, vehicle: Vehicle):
+    def set_vehicle(self, vehicle: Robot):
         self.vehicle = vehicle
 
-    def collision_detection(self, vehicle: Vehicle) -> bool:
+    def collision_detection(self, vehicle: Robot) -> bool:
         # Map collisions first
         off_map_collisions = pygame.sprite.spritecollide(
             vehicle,

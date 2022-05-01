@@ -9,7 +9,7 @@ from delivery.state import State
 
 VEHICLE_SPRITE = "./delivery/img/robot.png"
 
-class Vehicle(pygame.sprite.Sprite):
+class Robot(pygame.sprite.Sprite):
 
     def __init__(
         self,
@@ -41,9 +41,9 @@ class Vehicle(pygame.sprite.Sprite):
     def blit(self, display_surface: pygame.Surface):
         display_surface.blit(self.surface, self.rect)
 
-    def clone(self) -> Vehicle:
+    def clone(self) -> Robot:
         state = self.state.clone()
-        return Vehicle(state)
+        return Robot(state)
     
     def set_path(self, path: List[State]):
         self.path = path

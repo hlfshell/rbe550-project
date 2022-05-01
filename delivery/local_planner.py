@@ -6,7 +6,7 @@ import pygame
 from delivery.obstacle import Obstacle
 from delivery.state import State
 from delivery.priority_queue import Queue
-from delivery.vehicle import Vehicle
+from delivery.robot import Robot
 
 MAX_STEPS = 20_000
 SUCCESS_PROXIMITY_METERS = 0.25
@@ -90,7 +90,7 @@ class LocalPlanner():
             if not self.exists[x][y][theta]:
             # if neighbor not in self.parents:
                 # Check to see if this position is valid
-                shadow = Vehicle(neighbor)
+                shadow = Robot(neighbor)
                 if self.collision_detection(shadow):
                     continue
 
