@@ -1,6 +1,7 @@
-from random import choice, randint, random
+from random import choice, random
 from math import degrees, sqrt, cos, sin, pi
 from typing import List, Optional, Tuple
+from uuid import uuid4
 
 import pygame
 
@@ -11,6 +12,7 @@ class Car():
         self,
         path: List[Tuple[float, float, float, Tuple[int, int]]]
     ):
+        self.id = str(uuid4())
         self.path = path.copy()
 
         pixels_per_meter = 15

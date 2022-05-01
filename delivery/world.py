@@ -98,7 +98,14 @@ class World:
                 self.cars.remove(car)
                 self.cars.append(Car(path))
             else:
-                car.tick(time_delta)
+                if car.toggle_locks is not None:
+                    halt = False
+                    for node in car.toggle_locks:
+                        halt = halt or self.map.toggle_car_lock(car.id, node)
+                    if not halt:
+                        car.tick(time_delta)
+                else:
+                    car.tick(time_delta)
 
         locked = False
         with self.path_lock:
