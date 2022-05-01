@@ -121,16 +121,17 @@ class Map():
 
     def render(self, surface: pygame.Surface):
         # First, draw each line between neighbors
-        for id in self.nodes:
-            node = self.nodes[id]
-            xy = node.pixel_xy
-            for neighbor in self.get_neighbors(node):
-                pygame.draw.line(surface, (255, 0, 0), xy, neighbor.pixel_xy, 3)
+        # for id in self.nodes:
+        #     node = self.nodes[id]
+        #     xy = node.pixel_xy
+        #     for neighbor in self.get_neighbors(node):
+        #         pygame.draw.line(surface, (255, 0, 0), xy, neighbor.pixel_xy, 3)
         # Then draw the nodes. We do this to overlap connections
         # and not vice versa
         for id in self.nodes:
             node = self.nodes[id]
-            pygame.draw.circle(surface, node.color, node.pixel_xy, 5)
+            if node.type == "delivery":
+                pygame.draw.circle(surface, node.color, node.pixel_xy, 5)
 
     @staticmethod
     def _Create_Map_From_Nodes(nodes: List[Node]) -> Map:

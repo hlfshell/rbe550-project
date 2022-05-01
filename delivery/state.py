@@ -33,7 +33,7 @@ class State():
         self.thetadot = thetadot
 
         # Kinematic constants here
-        self.v_max = 1.6 #0.79 #0.79 #ws 1-.5m/sec with .1m radius wheel sb .79 radians/sec omega
+        self.v_max = 2.5 #1.6 #0.79 #0.79 #ws 1-.5m/sec with .1m radius wheel sb .79 radians/sec omega
         self.r = 0.1 # Wheel radius in meters
         self.L = 0.66 # Distance between wheels
     
@@ -48,6 +48,10 @@ class State():
                     continue
                 if v_left < 0 and v_right < 0:
                     continue
+                # if v_left > v_right and v_right < 0:
+                #     continue
+                # if v_right > v_left and v_left < 0:
+                #     continue
                 # if v_left == v_right and v_left != v_max:
                 #     continue
                 state = self.forward_kinematics(v_left, v_right, time_delta)

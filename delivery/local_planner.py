@@ -108,7 +108,6 @@ class LocalPlanner():
                 if heading_difference > pi:
                     heading_difference = (2*pi) - heading_difference
 
-                # heuristic_cost = (3 * distance_to_goal) + (0.5 * heading_difference)
                 heuristic_cost = (2 * distance_to_goal) + (0.25 * heading_difference)
                 node_cost = distance_between
 
