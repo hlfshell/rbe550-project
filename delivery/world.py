@@ -46,6 +46,7 @@ class World:
         self.path_lock = RLock()
         self.path_id: str = None
         self.planning: bool = False
+        self.robot_locked: bool = False
 
         self._display_surface = pygame.display.set_mode(WINDOW_SIZE)
         pygame.display.set_caption("RBE550 Delivery Robot Project")
@@ -107,7 +108,6 @@ class World:
                 else:
                     car.tick(time_delta)
 
-        locked = False
         with self.path_lock:
             # Determine where the car is on its path.
             index = self.vehicle.global_path_step
@@ -120,9 +120,9 @@ class World:
                         # get the next node
                         next_node = self.global_path[index]
                         if next_node.type == "crosswalk":
-                            locked = self.map.toggle_robot_lock(current_node.id)
+                            self.robot_locked = self.map.toggle_robot_lock(current_node.id)
 
-        if not locked:
+        if not self.robot_locked:
             self.vehicle.tick(time_delta)
 
     def draw_global_path(self):

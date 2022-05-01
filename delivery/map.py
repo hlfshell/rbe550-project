@@ -66,7 +66,9 @@ class Map():
         if self.locks[node] == []:
             lock = False
             self.locks[node] = ["robot"]
+            print("robot locking")
         elif self.locks[node] == ["robot"]:
+            print("robot unlocking")
             lock = False
             self.locks[node] = []
         else:
@@ -75,10 +77,9 @@ class Map():
 
     def toggle_car_lock(self, car_id: str, node: int) -> bool:
         lock = False
-
         if self.locks[node] == ["robot"]:
             lock = True
-        elif car_id in self.locks:
+        elif car_id in self.locks[node]:
             lock = False
             self.locks[node].remove(car_id)
         else:
