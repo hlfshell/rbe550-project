@@ -1,6 +1,6 @@
 from random import choice, randint, random
 from math import degrees, sqrt, cos, sin, pi
-from typing import List, Tuple
+from typing import List, Optional, Tuple
 
 import pygame
 
@@ -24,7 +24,8 @@ class Car():
    
         self.time = 0.0
         self.leg=1
-        self.path_finished = False
+        self.path_finished: bool = False
+        self.toggle_locks: Optional[List[int]] = None
       
         type = choice(["a", "b", "c"])
         self.image = pygame.image.load(
@@ -58,6 +59,8 @@ class Car():
     def tick(self, time_delta: float):
         self.time += time_delta
         pixels_per_meter = 15
+        self.toggle_locks = None
+
         prev_node = self.path[self.leg-1]
         next_node=self.path[self.leg]
 
@@ -88,6 +91,7 @@ class Car():
             self.x=next_node[0]/pixels_per_meter
             self.y=next_node[1]/pixels_per_meter
             self.theta=next_node[2]
+            self.toggle_locks = next_node[3]
             if self.leg<len(self.path)-1:
                 self.leg+=1
             else:

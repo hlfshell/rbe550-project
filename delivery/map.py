@@ -59,7 +59,7 @@ class Map():
 
     def __init__(self):
         self.nodes: Dict[int, Node] = {}
-        self.locks: defaultdict(lambda: []) = {}
+        self.locks = defaultdict(lambda: [])
 
     def toggle_robot_lock(self, node: int) -> bool:
         if len(self.locks[node]) == 0:
