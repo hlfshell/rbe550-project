@@ -87,14 +87,14 @@ Our goal is to create planning and execution algorithms to permit autonomous nav
      \caption{Initial Collision Map}
 \end{figure}
 
-\noindent \textbf{Obstacles}. In addition to off limits areas (buildings and streets-less-crosswalks) we place other obstacles into the environment.  These took the form of trashcans, trash bags, bicycles, dumpsters and traffic cones.  These obstacles were, of course, unknown to the global planner but register for the local planner as it seeks a path.  As part of the obstacle set, moving vehicles will be included on the roads to be avoided at the crosswalks.
+\noindent \textbf{Stationary Obstacles}. In addition to off limits areas (buildings and streets-less-crosswalks) we place other obstacles into the environment.  These took the form of trashcans, trash bags, bicycles, dumpsters and traffic cones.  These obstacles were, of course, unknown to the global planner but register for the local planner as it seeks a path.  As part of the obstacle set, moving vehicles will be included on the roads to be avoided at the crosswalks.
 \begin{figure}[H]
    \centering
     \includegraphics[width = 1\columnwidth]{figures/obstacles.png}
      \label{fig:obstacles}
      \caption{Obstacle Set}
 \end{figure}
-
+\noindent \textbf{Moving Obstacles}. For moving obstacles (vehicles at crosswalks), we simulate sensing the distance of an approaching vehicle.  If it is inside a safe movement distance the robot waits before initiating movement along the planned local route. When "the coast is clear", we initiate movement again.  If the robot is already in the crosswalk, perhaps delayed by planning around a crosswalk obstacle, the car has to stop to honor crosswalk rules.  \\
 
 \section*{Results}
 We obviously tested in phases as we constructed.  The global planner worked flawlessly  as the first part tested after creation of the environment and global network.  No difficulties were encountered.  The local planner required some tuning of state variables to simply the question of "have we been her before?".  Initially small variations which were essentially the same state registered as different and bogged calculations.  As we incorporated some rounding, performance improved. \\
@@ -122,10 +122,10 @@ M. Cheng, Y. Zhang, Y. Su, J. M. Alvarez and H. Kong, "Curb Detection for Road a
 \end{thebibliography}
 \pagebreak
 \section*{Appendix-Contributions}
-\noindent \textbf{Keith Chester}-Keith did most of the Python coding for the team.  We both participated in debugging efforts and finalization of the submissions and feel the workload was evenly distributed.
+\noindent \textbf{Keith Chester}-Keith did most of the Python coding for the team.  We both participated in debugging efforts and review and finalization of the submissions and feel the workload was evenly distributed.
 \bigskip
 
-\noindent \textbf{Bob DeMont}-Bob took care of the fiddly work of obtaining graphics, sorting out coordinates, tuning parameters and drafting the presentations and report.  We both participated in debugging efforts and finalization of the submissions and feel the workload was evenly distributed.
+\noindent \textbf{Bob DeMont}-Bob took care of the fiddly work of obtaining graphics, sorting out coordinates, tuning parameters, sorting out car movements and drafting the presentations and report.  We both participated in debugging efforts and finalization of the submissions and feel the workload was evenly distributed.
  
  
 
