@@ -3,6 +3,7 @@ from math import atan, atan2, degrees, pi, sqrt
 from typing import Callable, Dict, List, Optional, Tuple
 
 import pygame
+from delivery.obstacle import Obstacle
 from delivery.state import State
 from delivery.priority_queue import Queue
 from delivery.vehicle import Vehicle
@@ -18,6 +19,7 @@ class LocalPlanner():
         goal: Tuple[float, float],
         time_delta: float,
         collision_detection: Callable,
+        obstacles: List[Obstacle],
         surface: pygame.Surface
     ):
         self.queue = Queue()
@@ -25,6 +27,7 @@ class LocalPlanner():
         self.goal = goal
         self.time_delta = time_delta
         self.collision_detection = collision_detection
+        self.obstacles = obstacles
         self.surface = surface
 
         self.queue.push(start)
@@ -108,7 +111,22 @@ class LocalPlanner():
                 if heading_difference > pi:
                     heading_difference = (2*pi) - heading_difference
 
-                heuristic_cost = (2 * distance_to_goal) + (0.25 * heading_difference)
+                # Obstacle proximity penalty
+                near_obstacle = False
+                too_close_to_obstacle = False
+                for obstacle in self.obstacles:
+                    distance = sqrt(
+                        (obstacle.xy[0] - neighbor.x)**2 +
+                        (obstacle.xy[1] - neighbor.y)**2
+                    )
+                    if distance < 1.5:
+                        near_obstacle = True
+                
+                obstacle_penalty = 0 if not near_obstacle else 1
+
+                heuristic_cost = (2.25 * distance_to_goal) + \
+                    (0.5 * heading_difference) + \
+                    (3 * obstacle_penalty)
                 node_cost = distance_between
 
                 total_cost = node_cost + heuristic_cost
@@ -118,4 +136,4 @@ class LocalPlanner():
                 self.queue.push(neighbor, total_cost)
         
                 # Draw a dot for the current considered spot
-                # self.surface.fill((246, 74, 236), (neighbor.pixel_xy, (6, 6)))
+                self.surface.fill((246, 74, 236), (neighbor.pixel_xy, (6, 6)))

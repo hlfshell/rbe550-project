@@ -307,6 +307,7 @@ class World:
                 (goal.x, goal.y),
                 2.0,
                 self.collision_detection,
+                self.obstacles,
                 self._display_surface
             )
             # Finally, fire off the thread
