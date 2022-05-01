@@ -9,11 +9,9 @@ class Car():
 
     def __init__(
         self,
-        path: List[Tuple[float, float, float]]
+        path: List[Tuple[float, float, float, Tuple[int, int]]]
     ):
         self.path = path.copy()
-        #if randint(0, 1):
-        #    path.reverse()
 
         pixels_per_meter = 15
         self.x = self.path[0][0] / pixels_per_meter
@@ -27,7 +25,6 @@ class Car():
         self.time = 0.0
         self.leg=1
         self.path_finished = False
-
       
         type = choice(["a", "b", "c"])
         self.image = pygame.image.load(
