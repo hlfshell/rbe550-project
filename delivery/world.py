@@ -101,13 +101,20 @@ class World:
                 car.tick(time_delta)
 
         with self.path_lock:
-           # Determine where the car is on its path.
-           index = self.vehicle.global_path_step
-           if len(self.future_local_paths) >= index + 1 and \
-               self.vehicle.path is None:
-                   self.vehicle.path = self.future_local_paths[index] #[1:]
-
-        self.vehicle.tick(time_delta)
+            # Determine where the car is on its path.
+            index = self.vehicle.global_path_step
+            locked = False
+            if len(self.future_local_paths) >= index + 1 and \
+                self.vehicle.path is None:
+                    # Toggle the lock if possible
+                    node = self.global_path[index]
+                    if node.type == "crosswalk":
+                        locked = self.map.toggle_robot_lock(node.id)
+                        if not locked:
+                            self.vehicle.path = self.future_local_paths[index]
+                            self.vehicle.tick(time_delta)
+                    else:
+                        self.vehicle.tick(time_delta)
 
     def draw_global_path(self):
         if self.global_path is None:
