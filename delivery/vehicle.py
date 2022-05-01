@@ -91,6 +91,6 @@ class Vehicle(pygame.sprite.Sprite):
             y,
             theta,
             xdot = state.xdot,
-            ydot = state.xdot,
+            ydot = state.ydot,
             thetadot = state.thetadot
         )

@@ -122,10 +122,16 @@ class World:
                             # get the next node
                             next_node = self.global_path[index]
                             if next_node.type == "crosswalk":
-                                self.robot_locked = self.map.toggle_robot_lock(
+                                # Attempt to lock the sidewalk. If we fail
+                                # then it's already locked!
+                                lock = self.map.toggle_robot_lock(
                                     (current_node.id, next_node.id)
                                 )
-                                self.robot_unlock_at_node = next_node.id
+                                if lock is True:
+                                    self.robot_lockd = True
+                                else:
+                                    self.robot_locked = False
+                                    self.robot_unlock_at_node = next_node.id
                         else:
                             previous_node = self.global_path[index-2]
                             self.map.toggle_robot_lock(
@@ -354,7 +360,6 @@ class World:
                 continue
 
             global_path = self.global_path.copy()
-            print("got global path", global_path)
             current_node = global_path.pop(0)
             current_vehicle_state = self.vehicle.state
             planner_time_delta = 2.0
@@ -363,8 +368,6 @@ class World:
             self.vehicle.path = []
 
             while True:
-                print("state", current_vehicle_state)
-                print("goal", (current_node.x, current_node.y))
                 with self.path_lock:
                     with self.lock:
                         if self.local_path is not None:
