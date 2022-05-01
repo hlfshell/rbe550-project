@@ -47,6 +47,7 @@ class World:
         self.path_id: str = None
         self.planning: bool = False
         self.robot_locked: bool = False
+        self.robot_unlock_at_node: int = None
 
         self._display_surface = pygame.display.set_mode(WINDOW_SIZE)
         pygame.display.set_caption("RBE550 Delivery Robot Project")
@@ -101,8 +102,8 @@ class World:
             else:
                 if car.toggle_locks is not None:
                     halt = False
-                    for node in car.toggle_locks:
-                        halt = halt or self.map.toggle_car_lock(car.id, node)
+                    if car.toggle_locks != []:
+                        halt = halt or self.map.toggle_car_lock(car.id, car.toggle_locks)
                     if not halt:
                         car.tick(time_delta)
                 else:
@@ -117,10 +118,20 @@ class World:
                     # Toggle the lock if possible
                     current_node = self.global_path[index-1]
                     if current_node.type == "crosswalk":
-                        # get the next node
-                        next_node = self.global_path[index]
-                        if next_node.type == "crosswalk":
-                            self.robot_locked = self.map.toggle_robot_lock(current_node.id)
+                        if self.robot_unlock_at_node is None:
+                            # get the next node
+                            next_node = self.global_path[index]
+                            if next_node.type == "crosswalk":
+                                self.robot_locked = self.map.toggle_robot_lock(
+                                    (current_node.id, next_node.id)
+                                )
+                                self.robot_unlock_at_node = next_node.id
+                        else:
+                            previous_node = self.global_path[index-2]
+                            self.map.toggle_robot_lock(
+                                (previous_node.id, current_node.id)
+                            )
+                            self.robot_unlock_at_node = None
 
         if not self.robot_locked:
             self.vehicle.tick(time_delta)

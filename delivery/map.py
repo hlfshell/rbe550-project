@@ -61,30 +61,32 @@ class Map():
         self.nodes: Dict[int, Node] = {}
         self.locks = defaultdict(lambda: [])
 
-    def toggle_robot_lock(self, node: int) -> bool:
+    def toggle_robot_lock(self, nodes: Tuple[int, int]) -> bool:
+        key = (min(nodes), max(nodes))
+
         lock = False
-        if self.locks[node] == []:
+        if self.locks[key] == []:
             lock = False
-            self.locks[node] = ["robot"]
-            print("robot locking")
-        elif self.locks[node] == ["robot"]:
-            print("robot unlocking")
+            self.locks[key] = ["robot"]
+        elif self.locks[key] == ["robot"]:
             lock = False
-            self.locks[node] = []
+            self.locks[key] = []
         else:
             lock = True
         return lock
 
-    def toggle_car_lock(self, car_id: str, node: int) -> bool:
+    def toggle_car_lock(self, car_id: str, nodes: Tuple[int, int]) -> bool:
+        key = (min(nodes), max(nodes))
+
         lock = False
-        if self.locks[node] == ["robot"]:
+        if self.locks[key] == ["robot"]:
             lock = True
-        elif car_id in self.locks[node]:
+        elif car_id in self.locks[key]:
             lock = False
-            self.locks[node].remove(car_id)
+            self.locks[key].remove(car_id)
         else:
             lock = False
-            self.locks[node].append(car_id)
+            self.locks[key].append(car_id)
 
         return lock
 
