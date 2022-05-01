@@ -39,6 +39,7 @@ class World:
         self.map = Map.Get_Map()
 
         self.goal: int = None
+        self.chosen_goals: List[int] = []
         self.global_path: List[Node] = None
         self.local_path: List[State] = None
         self.future_local_paths: List[List[State]] = []
@@ -217,9 +218,11 @@ class World:
         if nearest_node == 0:
             if self.goal == None:
                 chosen_goal = choice(
-                    [node for node in self.map.nodes.values() if node.type == "delivery"]
+                    [node for node in self.map.nodes.values() \
+                        if node.type == "delivery" and node.id not in self.chosen_goals]
                 )
                 self.goal = chosen_goal.id
+                self.chosen_goals.append(chosen_goal.id)
         else:
             self.goal = 0
 
