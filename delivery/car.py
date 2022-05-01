@@ -55,8 +55,8 @@ class Car():
     def blit(self, surface: pygame.Surface):
         surface.blit(self.sprite, self.rect)
 
-        for node in self.path:
-            pygame.draw.circle(surface, (255, 0 ,0), (node[0], node[1]), 5)
+        # for node in self.path:
+        #     pygame.draw.circle(surface, (255, 0 ,0), (node[0], node[1]), 5)
     
     def tick(self, time_delta: float):
         self.time += time_delta
