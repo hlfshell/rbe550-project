@@ -59,6 +59,8 @@ class World:
         self.obstacles: List[Obstacle] = Obstacle.Load_Obstacles()
 
         self.cars: List[Car] = []
+        for path in CarPaths:
+            self.cars.append(Car(path))
 
         self.render()
     
@@ -98,14 +100,14 @@ class World:
             else:
                 car.tick(time_delta)
 
- #       with self.path_lock:
- #           # Determine where the car is on its path.
- #           index = self.vehicle.global_path_step
- #           if len(self.future_local_paths) >= index + 1 and \
- #               self.vehicle.path is None:
- #                   self.vehicle.path = self.future_local_paths[index] #[1:]
+        with self.path_lock:
+           # Determine where the car is on its path.
+           index = self.vehicle.global_path_step
+           if len(self.future_local_paths) >= index + 1 and \
+               self.vehicle.path is None:
+                   self.vehicle.path = self.future_local_paths[index] #[1:]
 
- #       self.vehicle.tick(time_delta)
+        self.vehicle.tick(time_delta)
 
     def draw_global_path(self):
         if self.global_path is None:
@@ -200,9 +202,6 @@ class World:
         self.global_path = planner.search()
 
     def test_cars(self):
-        for path in CarPaths:
-            self.cars.append(Car(path))
-
         while True:
             self.tick()
             self.render()
