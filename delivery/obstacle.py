@@ -43,7 +43,6 @@ class Obstacle(pygame.sprite.Sprite):
             Obstacle('trashcan', (516,140), 0),
             Obstacle('trashcan', (650,330), 0),
             Obstacle('bike', (1440,640), 0),
-            Obstacle('bike', (1580,250), 0),
             Obstacle('bike', (1440,720), 0),
             Obstacle('bike', (890,445), 0),
             Obstacle('cone', (870,750), 0),

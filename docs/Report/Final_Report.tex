@@ -25,7 +25,7 @@
 \vspace{5mm}
 \large RBE550-Spring 2022 }
 \author{Keith Chester, Bob DeMont}
-\date{May 5, 2022}
+\date{May 2, 2022}
 
 \begin{document}
 \maketitle
@@ -77,7 +77,8 @@ Our goal is to create planning and execution algorithms to permit autonomous nav
      \caption{A* Local Planner}
 \end{figure}
 
-\noindent \textbf{Asynchronous Planner}
+\noindent \textbf{Asynchronous Planner}. An asynchronous planner was created to speed presentation times.  This permits next step, local path planning while the robot is completing its current local leg.  \\
+\noindent Keith- add anything you want here or delete if the others cover it enough.\\
 
 \noindent \textbf{Simulation}. For simulating the environment we chose to use Pygame to capitalize on the collision detecting built into the sprite class.  A mask of the off-limits areas creates the curb and building limits for our robot's movement. We use the the alpha layer of the sprites for pixel-by-pixel comparisons- useful for tight transitions between obstacles..\
 \begin{figure}[H]
@@ -87,22 +88,31 @@ Our goal is to create planning and execution algorithms to permit autonomous nav
      \caption{Initial Collision Map}
 \end{figure}
 
-\noindent \textbf{Stationary Obstacles}. In addition to off limits areas (buildings and streets-less-crosswalks) we place other obstacles into the environment.  These took the form of trashcans, trash bags, bicycles, dumpsters and traffic cones.  These obstacles were, of course, unknown to the global planner but register for the local planner as it seeks a path.  As part of the obstacle set, moving vehicles will be included on the roads to be avoided at the crosswalks.
+\noindent \textbf{Stationary Obstacles}. In addition to off limits areas (buildings and streets-less-crosswalks) we place other obstacles into the environment.  These took the form of trashcans, trash bags, bicycles, dumpsters and traffic cones.  These obstacles were, of course, unknown to the global planner but register for the local planner as it seeks a path with obstacle avoidance.  As part of the obstacle set, moving vehicles will be included on the roads to be avoided at the crosswalks.
 \begin{figure}[H]
    \centering
     \includegraphics[width = 1\columnwidth]{figures/obstacles.png}
      \label{fig:obstacles}
      \caption{Obstacle Set}
 \end{figure}
-\noindent \textbf{Moving Obstacles}. For moving obstacles (vehicles at crosswalks), we simulate sensing the distance of an approaching vehicle.  If it is inside a safe movement distance the robot waits before initiating movement along the planned local route. When "the coast is clear", we initiate movement again.  If the robot is already in the crosswalk, perhaps delayed by planning around a crosswalk obstacle, the car has to stop to honor crosswalk rules.  \\
+\noindent \textbf{Moving Obstacles}. Random vehicle deigns are generated with random speeds between 6 and 12 m/sec along 4 set routes:these constitute our moving obstacles. For these, we simulate sensing the distance of an approaching vehicle.  If it is inside a safe movement distance the robot waits before initiating movement along the planned local route. When "the coast is clear", we initiate movement again.  If the robot is already in the crosswalk, perhaps delayed by planning around a crosswalk obstacle, the car has to stop to honor crosswalk rules.  After the robot clears, the vehicle proceeds again.\\
 
 \section*{Results}
-We obviously tested in phases as we constructed.  The global planner worked flawlessly  as the first part tested after creation of the environment and global network.  No difficulties were encountered.  The local planner required some tuning of state variables to simply the question of "have we been her before?".  Initially small variations which were essentially the same state registered as different and bogged calculations.  As we incorporated some rounding, performance improved. \\
-Integrating global and local planners worked well.  The global path handoff was successful and the local search found a mostly direct path.  Incorporating obstacles brought to light some interesting challenges.  If the obstacle happened to be covering the waypoint, it was impossible for the local search to complete.  One strategy might have been to abandon the immediate waypoint after a certain number of attempts and try to proceed to the next waypoint.  We chose instead to insure obstacles weren't directly on top of waypoints.  After that, we were able to navigate around all obstacles.  Some took longer that others depending on the collision space, but all eventually solved.  Moving obstacles....
+\textbf{Planners}. We tested in phases as we constructed.  The global planner worked flawlessly  as the first simulation part tested after creation of the environment and global network.  No difficulties were encountered.  The local planner required some tuning of state variables to simply the question of "have we been here before?".  Initially small state variations, which were essentially the same state, registered as different states and bogged calculations.  As we incorporated some rounding, performance improved. To smooth paths further, we borrowed a repulsive concept from APF and incorporated a near-the-obstacle penalty into the heuristic for search node generation.  Integrating global and local planners worked well.  The global path handoff was successful and the local search found a fairly direct path.  \\
+\noindent \textbf{Stationary Obstacles}.  Incorporating obstacles brought to light some interesting challenges.  If the obstacle happened to be covering the waypoint, it was impossible for the local search to complete.  One strategy might have been to abandon the immediate waypoint after a certain number of attempts and try to proceed to the next waypoint.  We chose instead to insure obstacles weren't directly on top of waypoints.  After that, we were able to navigate around all obstacles.  Some took longer that others depending on the collision space, but all eventually solved.  \\
+\noindent \textbf{Moving obstacles}.  Moving obstacles are successfully detected as approaching and the robot is locked out of proceeding until the car passes.  If the car comes near the crosswalk while the robot is already in the crosswalk and negotiating an obstacle, the car stops according to crosswalk rules and proceeds when the robot clears the crosswalk.
+\begin{figure}[H]
+   \centering
+    \includegraphics[width = 1\columnwidth]{figures/running.png}
+     \label{fig:running}
+     \caption{Simulation Running}
+\end{figure}
 
 \section*{Conclusions}
+\noindent Our technique of integrating the higher level global path plan for route planning with a lower level, local planner for collision avoidance allowed us to successfully navigate a suburban sidewalk strewn with obstacles for last mile delivery of groceries or packages.  Incorporating a small repulsive force in our local planner search heuristic allowed us to generate smoother paths through obstacle avoidance rather than obstacle handling.  
 
-
+\section*{Further Opportunities}
+\noindent Further opportunities exist to explore algorithmic approaches to solving the problem of when an obstacle is on top of a waypoint.  We solved by  insuring the robot could get "close enough" the the waypoint to begin the next leg.  We also considered the generation of two to three random destinations for the robot to deliver on the same route.  This adds complexity to the global planner to deliver an optimized route through 2-3 destinations.  Thankfully the delivery capacity in this case is small enough to avoid a complex "Travelling Salesman" problem.
 \label{References}
 
 \bibliographystyle{abbrv}
