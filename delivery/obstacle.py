@@ -3,8 +3,6 @@ from math import pi, degrees
 from typing import List, Tuple
 import pygame
 
-def _sprite(type: str):
-    return 
 
 class Obstacle(pygame.sprite.Sprite):
     def __init__(
@@ -31,7 +29,7 @@ class Obstacle(pygame.sprite.Sprite):
     @staticmethod
     def Load_Obstacles() -> List[Obstacle]:
         return [
-            Obstacle('dumpster', (740,300), 0),
+            Obstacle('dumpster', (740,325), 0),
             Obstacle('dumpster', (335,600), 0),
             Obstacle('dumpster', (715,600), 0),
             Obstacle('trashcan', (1360,437), 0),
@@ -45,22 +43,21 @@ class Obstacle(pygame.sprite.Sprite):
             Obstacle('trashcan', (516,140), 0),
             Obstacle('trashcan', (650,330), 0),
             Obstacle('bike', (1440,640), 0),
-            Obstacle('bike', (1580,250), 0),
             Obstacle('bike', (1440,720), 0),
-            Obstacle('bike', (890,445), 0),
-            Obstacle('cone', (870,750), 0),
-            Obstacle('cone', (765,735), 0),
+            Obstacle('bike', (895,445), 0),
+            Obstacle('cone', (900,750), 0),
+            Obstacle('cone', (770,725), 0),
             Obstacle('cone', (1215,215), 0),
-            Obstacle('cone', (1270,237), 0),
+            Obstacle('cone', (1270,225), 0),
             Obstacle('cone', (1327,255), 0),
-            Obstacle('cone', (540,225), 0),
-            Obstacle('cone', (540,250), 0),
+            Obstacle('cone', (590,215), 0),
+            Obstacle('cone', (540,270), 0),
             Obstacle('cone', (205,235), 0),
             Obstacle('cone', (150,220), 0)
         ]
 
     @staticmethod
-    def Load_Sprite( type: str) -> pygame.sprite.Sprite:
+    def Load_Sprite(type: str) -> pygame.surface.Surface:
         return pygame.image.load(
             f"./delivery/img/{type}.png"
         ).convert_alpha()

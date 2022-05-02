@@ -1,4 +1,5 @@
 from __future__ import annotations
+from collections import defaultdict
 from math import sqrt
 from typing import Dict, List, Tuple
 
@@ -58,6 +59,36 @@ class Map():
 
     def __init__(self):
         self.nodes: Dict[int, Node] = {}
+        self.locks = defaultdict(lambda: [])
+
+    def toggle_robot_lock(self, nodes: Tuple[int, int]) -> bool:
+        key = (min(nodes), max(nodes))
+
+        lock = False
+        if self.locks[key] == []:
+            lock = False
+            self.locks[key] = ["robot"]
+        elif self.locks[key] == ["robot"]:
+            lock = False
+            self.locks[key] = []
+        else:
+            lock = True
+        return lock
+
+    def toggle_car_lock(self, car_id: str, nodes: Tuple[int, int]) -> bool:
+        key = (min(nodes), max(nodes))
+
+        lock = False
+        if self.locks[key] == ["robot"]:
+            lock = True
+        elif car_id in self.locks[key]:
+            lock = False
+            self.locks[key].remove(car_id)
+        else:
+            lock = False
+            self.locks[key].append(car_id)
+
+        return lock
 
     def add_node(self, node: Node):
         if node.id in self.nodes:
@@ -71,22 +102,36 @@ class Map():
             neighbors.append(neighbor)
         return neighbors
 
+    def nearest_node(self, x: float, y: float) -> int:
+        nearest_node = 0
+        closest_distance = 9999
+        for node in self.nodes.values():
+            distance = sqrt(
+                (x - node.x)**2 +
+                (y - node.y)**2
+            )
+            if distance < closest_distance:
+                nearest_node = node.id
+                closest_distance = distance
+        return nearest_node
+
     @property
     def start(self) -> Node:
         return self.nodes[0]
 
     def render(self, surface: pygame.Surface):
         # First, draw each line between neighbors
-        for id in self.nodes:
-            node = self.nodes[id]
-            xy = node.pixel_xy
-            for neighbor in self.get_neighbors(node):
-                pygame.draw.line(surface, (255, 0, 0), xy, neighbor.pixel_xy, 3)
+        # for id in self.nodes:
+        #     node = self.nodes[id]
+        #     xy = node.pixel_xy
+        #     for neighbor in self.get_neighbors(node):
+        #         pygame.draw.line(surface, (255, 0, 0), xy, neighbor.pixel_xy, 3)
         # Then draw the nodes. We do this to overlap connections
         # and not vice versa
         for id in self.nodes:
             node = self.nodes[id]
-            pygame.draw.circle(surface, node.color, node.pixel_xy, 5)
+            if node.type == "delivery":
+                pygame.draw.circle(surface, node.color, node.pixel_xy, 5)
 
     @staticmethod
     def _Create_Map_From_Nodes(nodes: List[Node]) -> Map:
@@ -145,8 +190,7 @@ _nodes=[
     Node(42, (1335,325), 'delivery', [39,43]),
     Node(43, (1340,445), 'corner', [42,44]),
     Node(44, (1370,445), 'crosswalk', [33,43,48]),
-    Node(45, (1590,445), 'corner', [48,46]),
-    Node(46, (1590,65), 'delivery', [45]),
+    Node(45, (1590,445), 'corner', [48]),
     Node(47, (885,200), 'delivery', [3,38]),
     Node(48, (1450,445), 'delivery', [45,44])
 ]
